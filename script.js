@@ -8,7 +8,7 @@ function generateBars() {
     barContainer.innerHTML = '';
     array = [];
     for (let i = 0; i < 20; i++) {
-        array.push(Math.floor(Math.random() * 150) + 10);
+        array.push(Math.floor(Math.random() * 200) + 10);
     }
 
     for (let i = 0; i < array.length; i++) {
