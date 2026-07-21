@@ -54,3 +54,24 @@ sortBtn.addEventListener('click', bubbleSort);
 resetBtn.addEventListener('click', generateBars);
 
 window.onload = generateBars;
+
+
+// Added selection sort
+async function selectionSort() {
+    const bars = document.getElementsByClassName('bar');
+    for (let i = 0; i < array.length - 1; i++) {
+        let minIndex = i;
+        bars[minIndex].style.backgroundColor = 'red';
+        for (let j = i + 1; j < array.length; j++) {
+            bars[j].style.backgroundColor = 'yellow';
+            await sleep(50);
+            if (array[j] < array[minIndex]) {
+                bars[minIndex].style.backgroundColor = 'dodgerblue';
+                minIndex = j;
+                bars[minIndex].style.backgroundColor = 'red';
+            } else {
+                bars[j].style.backgroundColor = 'dodgerblue';
+            }
+        }
+    }
+}
