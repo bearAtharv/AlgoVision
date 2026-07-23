@@ -3,14 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlgoVision</title>
+    <title>Interactive Algorithm Education</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body>
-    <h1>AlgoVision</h1>
-    <div id="bar-container"></div>
-    <button id="sortBtn">Start Bubble Sort</button>
-    <button id="resetBtn">Generate New Array</button>
+    <div class="main-container">
+        <div id="sidebar">
+            <ul id="algorithm-list"></ul>
+        </div>
+        <div class="main-content">
+            <div id="code-container">
+                <select id="language-select">
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="cpp">C++</option>
+                </select>
+                <pre><code id="code-block" class="language-javascript"></code></pre>
+            </div>
+            <div id="visualization-container"></div>
+            <div id="controls">
+                <button id="play-btn">Play</button>
+                <button id="pause-btn">Pause</button>
+                <button id="reset-btn">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
