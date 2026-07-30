@@ -129,4 +129,4 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCodeView();
 });
 
-// code view initialization
+// pause toggle state check
