@@ -128,5 +128,3 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSidebar();
     updateCodeView();
 });
-
-// pause toggle state check
