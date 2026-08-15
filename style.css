@@ -145,3 +145,6 @@ pre[class*="language-"] {
 #controls button i {
     margin-right: 8px;
 }
+
+/* mid highlight tweak */
+.mid-element { background: purple !important; }
