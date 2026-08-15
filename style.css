@@ -17,6 +17,7 @@ body {
     background-color: #1E1E1E;
     padding: 20px;
     border-right: 1px solid #333;
+    overflow-y: auto;
 }
 
 #sidebar h2 {
@@ -105,7 +106,7 @@ pre[class*="language-"] {
 }
 
 #visualization-container {
-    flex-basis: 55%;
+    flex-grow: 1;
     margin-top: 20px;
     border: 1px solid #333;
     border-radius: 8px;
@@ -113,12 +114,14 @@ pre[class*="language-"] {
     justify-content: center;
     align-items: center;
     background-color: #1E1E1E;
+    min-height: 200px;
 }
 
 #controls {
     display: flex;
     justify-content: center;
-    padding: 15px 0;
+    padding-top: 20px;
+    flex-shrink: 0;
 }
 
 #controls button {
@@ -130,9 +133,15 @@ pre[class*="language-"] {
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.2s;
+    width: 120px;
+    text-align: center;
 }
 
 #controls button:hover {
     background-color: #3a3a3a;
     border-color: #555;
+}
+
+#controls button i {
+    margin-right: 8px;
 }
