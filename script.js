@@ -220,5 +220,3 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSidebar();
     updateCodeView();
 });
-
-// update: added binary search
