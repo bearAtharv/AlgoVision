@@ -12,16 +12,27 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="loading-screen">
+        <div class="loader-bars"></div>
+        <p class="loader-text">Decompiling legacy code...</p>
+    </div>
+
     <div class="main-container">
         <div id="sidebar">
             <h2>Algorithms</h2>
             <ul id="algorithm-list"></ul>
         </div>
         <div class="main-content">
-            <div id="language-selector">
-                <button class="lang-btn active" data-lang="javascript">JavaScript</button>
-                <button class="lang-btn" data-lang="python">Python</button>
-                <button class="lang-btn" data-lang="cpp">C++</button>
+            <div class="top-controls">
+                <div id="language-selector">
+                    <button class="lang-btn active" data-lang="javascript">JavaScript</button>
+                    <button class="lang-btn" data-lang="python">Python</button>
+                    <button class="lang-btn" data-lang="cpp">C++</button>
+                </div>
+                <div id="view-selector">
+                    <button class="view-btn active" data-view="bars"><i class="fas fa-chart-bar"></i> Bars</button>
+                    <button class="view-btn" data-view="array"><i class="fas fa-grip-horizontal"></i> Array</button>
+                </div>
             </div>
             <div id="code-container">
                 <div class="code-header">Code</div>
@@ -29,9 +40,15 @@
             </div>
             <div id="visualization-container"></div>
             <div id="controls">
-                <button id="play-btn"><i class="fas fa-play"></i> Play</button>
-                <button id="pause-btn"><i class="fas fa-pause"></i> Pause</button>
-                <button id="reset-btn"><i class="fas fa-sync-alt"></i> Reset</button>
+                <div class="playback-controls">
+                    <button id="play-btn"><i class="fas fa-play"></i> Play</button>
+                    <button id="pause-btn"><i class="fas fa-pause"></i> Pause</button>
+                    <button id="reset-btn"><i class="fas fa-sync-alt"></i> Reset</button>
+                </div>
+                <div class="speed-control">
+                    <label for="speed-slider">Speed</label>
+                    <input type="range" id="speed-slider" min="5" max="60" value="30">
+                </div>
             </div>
         </div>
     </div>
