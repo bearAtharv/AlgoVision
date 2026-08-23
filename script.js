@@ -1,3 +1,18 @@
+window.addEventListener('load', () => {
+    const loadingScreen = document.getElementById('loading-screen');
+    const loaderBars = document.querySelector('.loader-bars');
+    if (loaderBars) {
+        for (let i = 0; i < 5; i++) {
+            loaderBars.appendChild(document.createElement('span'));
+        }
+    }
+    setTimeout(() => {
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+        }
+    }, 500);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const algorithms = {
         'Bubble Sort': {
@@ -33,22 +48,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const algorithmList = document.getElementById('algorithm-list');
     const codeBlock = document.getElementById('code-block');
     const langButtons = document.querySelectorAll('.lang-btn');
+    const viewButtons = document.querySelectorAll('.view-btn');
     const playBtn = document.getElementById('play-btn');
     const pauseBtn = document.getElementById('pause-btn');
     const resetBtn = document.getElementById('reset-btn');
+    const speedSlider = document.getElementById('speed-slider');
 
     let currentAlgorithm = 'Bubble Sort';
     let currentLang = 'javascript';
+    let currentView = 'bars';
+    let animationSpeed = 30;
     let sketch;
 
     function updateCodeView() {
-        const lang = currentLang;
         const algo = algorithms[currentAlgorithm];
-        if (algo && algo.code[lang]) {
-            codeBlock.textContent = algo.code[lang];
-            codeBlock.className = `language-${lang}`;
+        if (algo && algo.code[currentLang]) {
+            codeBlock.textContent = algo.code[currentLang];
+            codeBlock.className = `language-${currentLang}`;
             Prism.highlightAll();
-        } 
+        }
     }
 
     function setupSidebar() {
@@ -77,39 +95,92 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentView = btn.dataset.view;
+            viewButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (sketch) sketch.reset();
+        });
+    });
+
+    // speedSlider.addEventListener('input', (e) => {
+        animationSpeed = e.target.value;
+        if (sketch) sketch.frameRate(parseInt(animationSpeed));
+    });
+
     const s = (p) => {
         let values = [];
-        let states = []; // -1: default, 0: comparing, 1: swapping, 2: sorted
+        let states = [];
         let sorter;
 
         p.setup = () => {
             const container = document.getElementById('visualization-container');
             const canvas = p.createCanvas(container.offsetWidth, container.offsetHeight);
             canvas.parent('visualization-container');
+            p.frameRate(animationSpeed);
             p.reset();
         };
 
         p.draw = () => {
             p.background('#1E1E1E');
             if (sorter) {
-                sorter.next();
+                let result = sorter.next();
+                if (result.done) {
+                    p.noLoop();
+                }
             }
-            let w = p.width / values.length;
-            for (let i = 0; i < values.length; i++) {
-                p.noStroke();
-                let color = '#E0E0E0'; // Default
-                if (states[i] === 0) color = '#00A99D'; // Comparing (Teal)
-                else if (states[i] === 1) color = '#FFC107'; // Swapping (Yellow)
-                else if (states[i] === 2) color = '#2E7D32'; // Sorted (Green)
-                else if (states[i] === 3) color = '#C51162'; // Pivot (Magenta)
-                p.fill(color);
-                p.rect(i * w, p.height - values[i], w, values[i]);
+            if (currentView === 'bars') {
+                drawBars();
+            } else {
+                drawArray();
             }
         };
 
+        function drawBars() {
+            let w = p.width / values.length;
+            for (let i = 0; i < values.length; i++) {
+                p.noStroke();
+                p.fill(getColor(states[i]));
+                p.rect(i * w, p.height - values[i], w, values[i]);
+            }
+        }
+
+        function drawArray() {
+            let n = values.length;
+            let boxSize = p.min(p.width / (n + 1), 60);
+            let startX = (p.width - n * boxSize - (n - 1) * 5) / 2;
+            let y = p.height / 2;
+
+            for (let i = 0; i < n; i++) {
+                p.stroke(getColor(states[i]));
+                p.strokeWeight(3);
+                p.fill('#2a2a2a');
+                p.rect(startX + i * (boxSize + 5), y - boxSize / 2, boxSize, boxSize, 8);
+
+                p.noStroke();
+                p.fill('#E0E0E0');
+                p.textAlign(p.CENTER, p.CENTER);
+                p.textSize(boxSize * 0.5);
+                p.text(Math.floor(values[i]), startX + i * (boxSize + 5) + boxSize / 2, y);
+            }
+        }
+
+        function getColor(state) {
+            if (state === 0) return '#00A99D';
+            if (state === 1) return '#FFC107';
+            if (state === 2) return '#2E7D32';
+            if (state === 3) return '#C51162';
+            return '#424242'; // Darker default for borders
+        }
+
         p.reset = () => {
             p.noLoop();
-            values = Array.from({ length: 40 }, () => p.random(15, p.height - 20));
+            let numElements = currentView === 'bars' ? 40 : 10;
+            values = Array.from({ length: numElements }, () => p.random(1, 100));
+            if (currentView === 'bars') {
+                values = values.map(v => p.map(v, 1, 100, 15, p.height - 20));
+            }
             states = new Array(values.length).fill(-1);
             if (currentAlgorithm.includes('Search')) {
                 values.sort((a, b) => a - b);
@@ -125,10 +196,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'Insertion Sort': yield* insertionSort(arr, states); break;
                 case 'Binary Search': yield* binarySearch(arr, states, arr[Math.floor(p.random(arr.length))]); break;
             }
-            // Final pass to mark all as sorted
             for(let i=0; i<states.length; i++) {
                 states[i] = 2;
-                yield;
+                if(i % 5 === 0) yield;
             }
         }
 
@@ -141,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         states[j] = 1; states[j + 1] = 1;
                         yield;
                         [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                        yield;
                     }
                     states[j] = -1; states[j + 1] = -1;
                 }
@@ -151,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function* selectionSort(arr, states) {
             for (let i = 0; i < arr.length - 1; i++) {
                 let min_idx = i;
-                states[i] = 3; // Pivot color for current minimum
+                states[i] = 3;
                 for (let j = i + 1; j < arr.length; j++) {
                     states[j] = 0;
                     yield;
@@ -167,56 +238,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 [arr[i], arr[min_idx]] = [arr[min_idx], arr[i]];
                 states[min_idx] = -1;
                 states[i] = 2;
+                yield;
             }
             states[arr.length - 1] = 2;
         }
 
         function* insertionSort(arr, states) {
+            states[0] = 2;
             for (let i = 1; i < arr.length; i++) {
                 let key = arr[i];
                 let j = i - 1;
                 states[i] = 3;
                 yield;
                 while (j >= 0 && arr[j] > key) {
-                    states[j] = 1;
-                    arr[j + 1] = arr[j];
+                    states[j] = 0;
                     yield;
-                    states[j] = -1;
+                    states[j + 1] = 1;
+                    arr[j + 1] = arr[j];
+                    states[j] = 1;
+                    yield;
+                    states[j + 1] = 2;
+                    states[j] = 2;
                     j--;
                 }
                 arr[j + 1] = key;
+                states[i] = -1;
                 for(let k=0; k<=i; k++) states[k] = 2;
+                yield;
             }
         }
 
         function* binarySearch(arr, states, target) {
             let low = 0, high = arr.length - 1;
             while(low <= high) {
-                for(let i=low; i<=high; i++) states[i] = 0;
+                for(let i=0; i<arr.length; i++) states[i] = (i >= low && i <= high) ? 0 : -1;
                 yield;
                 let mid = Math.floor((low + high) / 2);
                 states[mid] = 3;
                 yield;
-                if(arr[mid] === target) {
+                if(Math.floor(arr[mid]) === Math.floor(target)) {
                     states[mid] = 2;
                     return;
                 } else if (arr[mid] < target) {
-                    for(let i=low; i<=mid; i++) states[i] = -1;
                     low = mid + 1;
                 } else {
-                    for(let i=mid; i<=high; i++) states[i] = -1;
                     high = mid - 1;
                 }
             }
         }
     };
 
+    setupSidebar();
+    updateCodeView();
     sketch = new p5(s);
 
     playBtn.addEventListener('click', () => sketch.loop());
     pauseBtn.addEventListener('click', () => sketch.noLoop());
     resetBtn.addEventListener('click', () => sketch.reset());
-
-    setupSidebar();
-    updateCodeView();
 });
