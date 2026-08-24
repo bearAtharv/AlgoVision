@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // speedSlider.addEventListener('input', (e) => {
+    speedSlider.addEventListener('input', (e) => {
         animationSpeed = e.target.value;
         if (sketch) sketch.frameRate(parseInt(animationSpeed));
     });
@@ -296,3 +296,4 @@ document.addEventListener('DOMContentLoaded', () => {
     pauseBtn.addEventListener('click', () => sketch.noLoop());
     resetBtn.addEventListener('click', () => sketch.reset());
 });
+// speed slider controls connected
