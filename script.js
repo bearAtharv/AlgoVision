@@ -296,4 +296,4 @@ document.addEventListener('DOMContentLoaded', () => {
     pauseBtn.addEventListener('click', () => sketch.noLoop());
     resetBtn.addEventListener('click', () => sketch.reset());
 });
-// speed slider controls connected
+// timing delay adjustment
