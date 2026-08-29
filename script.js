@@ -382,3 +382,5 @@ document.addEventListener('DOMContentLoaded', () => {
     pauseBtn.addEventListener('click', () => sketch.noLoop());
     resetBtn.addEventListener('click', () => sketch.reset());
 });
+
+// update: added linear search
