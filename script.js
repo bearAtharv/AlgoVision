@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentCategory = 'sorting';
     let currentLang = 'javascript';
     let currentView = 'bars';
-    let animationSpeed = 30;
+    let animationSpeed = 45;
     let sketch;
 
     function getAlgoData(category, name) { return algorithms[category][name]; }
