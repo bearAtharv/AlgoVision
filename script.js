@@ -48,12 +48,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     java: `class ShellSort {\n    int sort(int arr[]) {\n        int n = arr.length;\n        for (int gap = n/2; gap > 0; gap /= 2) {\n            for (int i = gap; i < n; i += 1) {\n                int temp = arr[i];\n                int j;\n                for (j = i; j >= gap && arr[j - gap] > temp; j -= gap)\n                    arr[j] = arr[j - gap];\n                arr[j] = temp;\n            }\n        }\n        return 0;\n    }\n}`
                 }
             },
+'Merge Sort': {
+                complexity: { time: 'O(n log n)', space: 'O(n)' },
+                code: {
+                    javascript: `function mergeSort(arr) {\n  if (arr.length <= 1) return arr;\n  const mid = Math.floor(arr.length / 2);\n  const left = mergeSort(arr.slice(0, mid));\n  const right = mergeSort(arr.slice(mid));\n\n  let i = 0, j = 0, k = 0;\n  const result = [];\n  while (i < left.length && j < right.length) {\n    if (left[i] < right[j]) {\n      result[k++] = left[i++];\n    } else {\n      result[k++] = right[j++];\n    }\n  }\n  while (i < left.length) result[k++] = left[i++];\n  while (j < right.length) result[k++] = right[j++];\n  return result;\n}`,
+                    python: `def merge_sort(arr):\n    if len(arr) > 1:\n        mid = len(arr)//2\n        L = arr[:mid]\n        R = arr[mid:]\n        merge_sort(L)\n        merge_sort(R)\n        i = j = k = 0\n        while i < len(L) and j < len(R):\n            if L[i] < R[j]:\n                arr[k] = L[i]\n                i += 1\n            else:\n                arr[k] = R[j]\n                j += 1\n            k += 1\n        while i < len(L):\n            arr[k] = L[i]\n            i += 1\n            k += 1\n        while j < len(R):\n            arr[k] = R[j]\n            j += 1\n            k += 1`,
+                    cpp: `void merge(int arr[], int l, int m, int r) {\n    int n1 = m - l + 1;\n    int n2 = r - m;\n    int L[n1], R[n2];\n    for (int i = 0; i < n1; i++) L[i] = arr[l + i];\n    for (int j = 0; j < n2; j++) R[j] = arr[m + 1 + j];\n    int i = 0, j = 0, k = l;\n    while (i < n1 && j < n2) {\n        if (L[i] <= R[j]) arr[k++] = L[i++];\n        else arr[k++] = R[j++];\n    }\n    while (i < n1) arr[k++] = L[i++];\n    while (j < n2) arr[k++] = R[j++];\n}\n\nvoid mergeSort(int arr[], int l, int r) {\n    if (l >= r) return;\n    int m = l + (r - l) / 2;\n    mergeSort(arr, l, m);\n    mergeSort(arr, m + 1, r);\n    merge(arr, l, m, r);\n}`,
+                    java: `class MergeSort {\n    void merge(int arr[], int l, int m, int r) {\n        int n1 = m - l + 1;\n        int n2 = r - m;\n        int L[] = new int[n1];\n        int R[] = new int[n2];\n        for (int i = 0; i < n1; ++i) L[i] = arr[l + i];\n        for (int j = 0; j < n2; ++j) R[j] = arr[m + 1 + j];\n        int i = 0, j = 0, k = l;\n        while (i < n1 && j < n2) {\n            if (L[i] <= R[j]) arr[k++] = L[i++];\n            else arr[k++] = R[j++];\n        }\n        while (i < n1) arr[k++] = L[i++];\n        while (j < n2) arr[k++] = R[j++];\n    }\n\n    void sort(int arr[], int l, int r) {\n        if (l < r) {\n            int m = (l + r) / 2;\n            sort(arr, l, m);\n            sort(arr, m + 1, r);\n            merge(arr, l, m, r);\n        }\n    }\n}`
+                }
+            },
+            'Quick Sort': {
+                complexity: { time: 'O(n log n)', space: 'O(log n)' },
+                code: {
+                    javascript: `function quickSort(arr, low, high) {\n  if (low < high) {\n    let pi = partition(arr, low, high);\n    quickSort(arr, low, pi - 1);\n    quickSort(arr, pi + 1, high);\n  }\n  return arr;\n}\n\nfunction partition(arr, low, high) {\n  let pivot = arr[high];\n  let i = low - 1;\n  for (let j = low; j < high; j++) {\n    if (arr[j] < pivot) {\n      i++;\n      [arr[i], arr[j]] = [arr[j], arr[i]];\n    }\n  }\n  [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];\n  return i + 1;\n}`,
+                    python: `def partition(arr, low, high):\n    i = (low-1)\n    pivot = arr[high]\n    for j in range(low, high):\n        if arr[j] <= pivot:\n            i = i+1\n            arr[i], arr[j] = arr[j], arr[i]\n    arr[i+1], arr[high] = arr[high], arr[i+1]\n    return (i+1)\n\ndef quick_sort(arr, low, high):\n    if len(arr) == 1:\n        return arr\n    if low < high:\n        pi = partition(arr, low, high)\n        quick_sort(arr, low, pi-1)\n        quick_sort(arr, pi + 1, high)`,
+                    cpp: `void swap(int* a, int* b) {\n    int t = *a; *a = *b; *b = t;\n}\n\nint partition (int arr[], int low, int high) {\n    int pivot = arr[high];\n    int i = (low - 1);\n    for (int j = low; j <= high - 1; j++) {\n        if (arr[j] < pivot) {\n            i++;\n            swap(&arr[i], &arr[j]);\n        }\n    }\n    swap(&arr[i + 1], &arr[high]);\n    return (i + 1);\n}\n\nvoid quickSort(int arr[], int low, int high) {\n    if (low < high) {\n        int pi = partition(arr, low, high);\n        quickSort(arr, low, pi - 1);\n        quickSort(arr, pi + 1, high);\n    }\n}`,
+                    java: `class QuickSort {\n    int partition(int arr[], int low, int high) {\n        int pivot = arr[high];\n        int i = (low-1);\n        for (int j=low; j<high; j++) {\n            if (arr[j] <= pivot) {\n                i++;\n                int temp = arr[i];\n                arr[i] = arr[j];\n                arr[j] = temp;\n            }\n        }\n        int temp = arr[i+1];\n        arr[i+1] = arr[high];\n        arr[high] = temp;\n        return i+1;\n    }\n\n    void sort(int arr[], int low, int high) {\n        if (low < high) {\n            int pi = partition(arr, low, high);\n            sort(arr, low, pi-1);\n            sort(arr, pi+1, high);\n        }\n    }\n}`
+                }
+            },
         },
         searching: {
             'Linear Search': {
                 complexity: { time: 'O(n)', space: 'O(1)' },
                 code: {
-                    javascript: `function linearSearch(arr, key) {\n  for(let i = 0; i < arr.length; i++){\n    if(arr[i] === key) return i;\n  }\n  return -1;\n}`,
+                    javascript: `function linearSearch(arr, key) {\n  for(let i = 0; i < arr.length; i++){`,
                     python: `def linear_search(arr, x):\n    for i in range(len(arr)):\n        if arr[i] == x:\n            return i\n    return -1`,
                     cpp: `int linearSearch(int arr[], int n, int x) {\n    for (int i = 0; i < n; i++)\n        if (arr[i] == x)\n            return i;\n    return -1;\n}`,
                     java: `class LinearSearch {\n    public static int linearSearch(int arr[], int x) {\n        int n = arr.length;\n        for(int i = 0; i < n; i++) {\n            if(arr[i] == x)\n                return i;\n        }\n        return -1;\n    }\n}`
@@ -83,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pauseBtn = document.getElementById('pause-btn');
     const resetBtn = document.getElementById('reset-btn');
     const speedSlider = document.getElementById('speed-slider');
+    const codeContainer = document.getElementById('code-container');
 
     let currentAlgorithm = 'Bubble Sort';
     let currentCategory = 'sorting';
@@ -248,6 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'Selection Sort': return selectionSort(values, states);
                 case 'Insertion Sort': return insertionSort(values, states);
                 case 'Shell Sort': return shellSort(values, states);
+                case 'Merge Sort': return mergeSort(values, 0, values.length - 1, states);
+                case 'Quick Sort': return quickSort(values, 0, values.length - 1, states);
                 case 'Linear Search': return linearSearch(values, states, target);
                 case 'Binary Search': return binarySearch(values, states, target);
             }
@@ -343,6 +364,100 @@ document.addEventListener('DOMContentLoaded', () => {
             for(let i=0; i<n; i++) { states[i] = 2; if(i%5===0) yield; }
         }
 
+        function* mergeSort(arr, l, r, states) {
+            if (l >= r) return;
+            const m = Math.floor((l + r) / 2);
+            yield* mergeSort(arr, l, m, states);
+            yield* mergeSort(arr, m + 1, r, states);
+            yield* merge(arr, l, m, r, states);
+        }
+
+        function* merge(arr, l, m, r, states) {
+            let n1 = m - l + 1;
+            let n2 = r - m;
+            let L = new Array(n1);
+            let R = new Array(n2);
+
+            for (let i = 0; i < n1; i++) L[i] = arr[l + i];
+            for (let j = 0; j < n2; j++) R[j] = arr[m + 1 + j];
+
+            let i = 0, j = 0, k = l;
+
+            while (i < n1 && j < n2) {
+                states[l + i] = 0;
+                states[m + 1 + j] = 0;
+                yield;
+                if (L[i] <= R[j]) {
+                    arr[k] = L[i];
+                    states[k] = 1;
+                    i++;
+                } else {
+                    arr[k] = R[j];
+                    states[k] = 1;
+                    j++;
+                }
+                yield;
+                states[k] = -1;
+                k++;
+            }
+
+            while (i < n1) {
+                arr[k] = L[i];
+                states[k] = 1;
+                yield;
+                states[k] = -1;
+                i++;
+                k++;
+            }
+
+            while (j < n2) {
+                arr[k] = R[j];
+                states[k] = 1;
+                yield;
+                states[k] = -1;
+                j++;
+                k++;
+            }
+            for(let i = l; i <=r; i++) states[i] = 2;
+            yield;
+        }
+
+        function* quickSort(arr, low, high, states) {
+            if (low < high) {
+                let pi = yield* partition(arr, low, high, states);
+                yield* quickSort(arr, low, pi - 1, states);
+                yield* quickSort(arr, pi + 1, high, states);
+            }
+            if(low >=0 && low < arr.length) states[low] = 2;
+            if(high >=0 && high < arr.length) states[high] = 2;
+        }
+
+        function* partition(arr, low, high, states) {
+            let pivot = arr[high];
+            states[high] = 3;
+            let i = low - 1;
+            for (let j = low; j < high; j++) {
+                states[j] = 0;
+                yield;
+                if (arr[j] < pivot) {
+                    i++;
+                    states[i] = 1; states[j] = 1;
+                    yield;
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                    yield;
+                    states[i] = -1; states[j] = -1;
+                }
+                states[j] = -1;
+            }
+            states[i + 1] = 1; states[high] = 1;
+            yield;
+            [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+            yield;
+            states[i + 1] = -1; states[high] = -1;
+            states[i+1] = 2;
+            return i + 1;
+        }
+
         function* linearSearch(arr, states, target) {
             for (let i = 0; i < arr.length; i++) {
                 states[i] = 0;
@@ -378,6 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sketch = new p5(s);
     setupSidebar();
 
+    
     playBtn.addEventListener('click', () => sketch.loop());
     pauseBtn.addEventListener('click', () => sketch.noLoop());
     resetBtn.addEventListener('click', () => sketch.reset());
