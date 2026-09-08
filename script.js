@@ -498,4 +498,4 @@ document.addEventListener('DOMContentLoaded', () => {
     pauseBtn.addEventListener('click', () => sketch.noLoop());
     resetBtn.addEventListener('click', () => sketch.reset());
 });
-// update: added quick sort
+// partition index boundary fix
