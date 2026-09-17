@@ -18,6 +18,8 @@ body { font-family: 'Inter', sans-serif; background-color: #121212; color: #E0E0
 #algorithm-list li { padding: 12px 15px; cursor: pointer; border-radius: 5px; margin-bottom: 8px; transition: background-color 0.2s; border-left: 3px solid transparent; }
 #algorithm-list li:hover { background-color: #2a2a2a; }
 #algorithm-list li.active { background-color: #2a2a2a; border-left: 3px solid #00A99D; font-weight: 500; }
+#custom-algo-btn { background-color: #C51162; color: #fff; border: none; padding: 12px 15px; cursor: pointer; transition: background-color 0.2s; width: 100%; text-align: left; border-radius: 5px; margin-top: 10px; font-size: 1em; }
+#custom-algo-btn:hover { background-color: #AD0E54; }
 #attribution { padding-top: 20px; text-align: center; color: #666; font-size: 0.9em; }
 #attribution i { margin-right: 8px; }
 .main-content { flex-grow: 1; display: flex; flex-direction: column; padding: 20px; height: 100vh; box-sizing: border-box; }
@@ -50,3 +52,16 @@ pre[class*="language-"] { flex-grow: 1; margin: 0; overflow: auto; background: #
 input[type=range] { -webkit-appearance: none; width: 150px; background: transparent; }
 input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #333; border-radius: 5px; }
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #00A99D; cursor: pointer; margin-top: -6px; }
+
+#explanation-container { flex-basis: 20%; display: flex; flex-direction: column; background-color: #1E1E1E; border-radius: 8px; border: 1px solid #333; overflow: hidden; margin-top: 15px; }
+#explanation { flex-grow: 1; background-color: #1E1E1E; color: #E0E0E0; border: none; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 14px; resize: none; }
+
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+.modal-content { background-color: #1E1E1E; margin: 15% auto; padding: 20px; border: 1px solid #333; width: 80%; border-radius: 8px; }
+.close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+.close-btn:hover, .close-btn:focus { color: #fff; text-decoration: none; cursor: pointer; }
+
+#custom-code-container { flex-basis: 60%; display: flex; flex-direction: column; background-color: #1E1E1E; border-radius: 8px; border: 1px solid #333; overflow: hidden; margin-top: 15px; }
+.CodeMirror { flex-grow: 1; background-color: #1E1E1E; color: #E0E0E0; border: none; font-family: 'Courier New', Courier, monospace; font-size: 14px; resize: none; }
+#visualize-custom-code-btn { background-color: #00A99D; color: #fff; border: none; padding: 10px; cursor: pointer; transition: background-color 0.2s; }
+#visualize-custom-code-btn:hover { background-color: #00877A; }
