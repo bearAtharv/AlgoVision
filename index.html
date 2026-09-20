@@ -42,14 +42,32 @@
                 <button class="lang-btn" data-lang="java">Java</button>
             </div>
             <div id="code-container">
-                <div class="code-header">Code</div>
+                <div class="code-header">
+                    <span>Code</span>
+                    <button id="show-explanation-btn">Show Explanation</button>
+                </div>
                 <pre><code id="code-block" class="language-javascript"></code></pre>
             </div>
+            <div id="explanation-and-complexity-container" style="display: none;">
+                <div id="algorithm-explanation">
+                    <h4>Algorithm Steps:</h4>
+                    <ol id="explanation-steps"></ol>
+                </div>
+                <div id="complexity-info">
+                    <div class="complexity-item">Time Complexity: <span id="time-complexity"></span></div>
+                    <div class="complexity-item">Space Complexity: <span id="space-complexity"></span></div>
+                </div>
+            </div>
             <div id="custom-code-container" style="display: none;">
-                <div class="code-header">Custom JavaScript Code</div>
+                <div class="code-header">
+                    <span>Custom JavaScript Code</span>
+                    <button id="guide-btn">How to Write Algorithms</button>
+                </div>
                 <textarea id="custom-code-editor" placeholder="Enter your generator function here..."></textarea>
+                <div id="custom-input-container">
+                    <textarea id="custom-input" placeholder="Enter input as a comma-separated list (e.g., 5,2,8,1) or a string."></textarea>
+                </div>
                 <button id="visualize-custom-code-btn">Visualize</button>
-                <button id="guide-btn">How to Write Algorithms</button>
             </div>
             <div class="visualization-wrapper">
                 <div id="vis-header">
@@ -74,10 +92,7 @@
                     <button id="pause-btn"><i class="fas fa-pause"></i> Pause</button>
                     <button id="reset-btn"><i class="fas fa-sync-alt"></i> Reset</button>
                 </div>
-                <div id="view-selector">
-                    <button class="view-btn active" data-view="bars"><i class="fas fa-chart-bar"></i> Bars</button>
-                    <button class="view-btn" data-view="array"><i class="fas fa-grip-horizontal"></i> Array</button>
-                </div>
+
                 <div class="speed-control">
                     <i class="fas fa-tachometer-alt"></i>
                     <input type="range" id="speed-slider" min="1" max="120" value="45">
