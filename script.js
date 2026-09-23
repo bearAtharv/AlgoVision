@@ -10,68 +10,10 @@ window.addEventListener('load', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const algorithmList = document.getElementById('algorithm-list');
-    const searchInputContainer = document.getElementById('search-input-container');
-    const searchInput = document.getElementById('search-input');
-    const timeComplexityEl = document.getElementById('time-complexity');
-    const spaceComplexityEl = document.getElementById('space-complexity');
-    const codeBlock = document.getElementById('code-block');
-    const langButtons = document.querySelectorAll('.lang-btn');
-    const playBtn = document.getElementById('play-btn');
-    const pauseBtn = document.getElementById('pause-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const speedSlider = document.getElementById('speed-slider');
-    const customAlgoBtn = document.getElementById('custom-algo-btn');
-    const languageSelector = document.getElementById('language-selector');
-    const codeContainer = document.getElementById('code-container');
-    const customCodeContainer = document.getElementById('custom-code-container');
-    const customCodeEditor = CodeMirror.fromTextArea(document.getElementById('custom-code-editor'), {
-        lineNumbers: true,
-        theme: 'dracula',
-        mode: 'javascript'
-    });
-    const explanationAndComplexityContainer = document.getElementById('explanation-and-complexity-container');
-    const explanationContainer = document.getElementById('algorithm-explanation');
-    const explanationSteps = document.getElementById('explanation-steps');
-    const showExplanationBtn = document.getElementById('show-explanation-btn');
-
-    showExplanationBtn.addEventListener('click', () => {
-        const algoData = getAlgoData(currentCategory, currentAlgorithm);
-        if (algoData.explanation) {
-            explanationSteps.innerHTML = '';
-            algoData.explanation.forEach(step => {
-                const li = document.createElement('li');
-                li.textContent = step;
-                explanationSteps.appendChild(li);
-            });
-            explanationContainer.style.display = explanationContainer.style.display === 'none' ? 'block' : 'none';
-        } else {
-            explanationSteps.innerHTML = '<li>Explanation not available.</li>';
-            explanationContainer.style.display = 'block';
-        }
-    });
-    const visualizeCustomCodeBtn = document.getElementById('visualize-custom-code-btn');
-
-    let currentAlgorithm = 'Bubble Sort';
-    let currentCategory = 'sorting';
-    let currentLang = 'javascript';
-    let currentView = 'bars';
-    let animationSpeed = 45;
-    let sketch;
-    let worker;
-
     const algorithms = {
         sorting: {
             'Bubble Sort': {
                 complexity: { time: 'O(n²)', space: 'O(1)' },
-                explanation: [
-                    'Iterate through the list from beginning to end.',
-                    'In each iteration, compare the current element with the next one.',
-                    'If the current element is greater than the next, swap them.',
-                    'Repeat this process for all elements. The largest element will bubble to the end.',
-                    'With each full pass, the next largest element is placed in its correct position.',
-                    'The algorithm is complete when a pass is made with no swaps.'
-                ],
                 code: {
                     javascript: `function bubbleSort(arr) {\n  for (let i = 0; i < arr.length; i++) {\n    for (let j = 0; j < arr.length - i - 1; j++) {\n      if (arr[j] > arr[j + 1]) {\n        let temp = arr[j];\n        arr[j] = arr[j+1];\n        arr[j+1] = temp;\n      }\n    }\n  }\n  return arr;\n}`,
                     python: `def bubble_sort(arr):\n    n = len(arr)\n    for i in range(n):\n        for j in range(0, n-i-1):\n            if arr[j] > arr[j+1]:\n                arr[j], arr[j+1] = arr[j+1], arr[j]`,
@@ -81,12 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             'Selection Sort': {
                 complexity: { time: 'O(n²)', space: 'O(1)' },
-                explanation: [
-                    'Find the minimum element in the unsorted part of the array.',
-                    'Swap the found minimum element with the first element of the unsorted part.',
-                    'Move the boundary of the sorted and unsorted parts one element to the right.',
-                    'Repeat the process until the entire array is sorted.'
-                ],
                 code: {
                     javascript: `function selectionSort(arr) {\n  for (let i = 0; i < arr.length; i++) {\n    let min = i;\n    for (let j = i + 1; j < arr.length; j++) {\n      if (arr[j] < arr[min]) min = j;\n    }\n    if (min !== i) [arr[i], arr[min]] = [arr[min], arr[i]];\n  }\n  return arr;\n}`,
                     python: `def selection_sort(arr):\n    for i in range(len(arr)):\n        min_idx = i\n        for j in range(i + 1, len(arr)):\n            if arr[j] < arr[min_idx]:\n                min_idx = j\n        arr[i], arr[min_idx] = arr[min_idx], arr[i]`,
@@ -96,14 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             'Insertion Sort': {
                 complexity: { time: 'O(n²)', space: 'O(1)' },
-                explanation: [
-                    'Iterate from the second element to the end of the array.',
-                    'The current element is the one to be inserted into the sorted portion.',
-                    'Compare the current element with the elements in the sorted portion (on its left).',
-                    'Shift all elements in the sorted portion that are greater than the current element one position to the right.',
-                    'Insert the current element into the correct position.',
-                    'Repeat for all elements.'
-                ],
                 code: {
                     javascript: `function insertionSort(arr) {\n  for (let i = 1; i < arr.length; i++) {\n    let current = arr[i];\n    let j = i - 1;\n    while ((j > -1) && (current < arr[j])) {\n      arr[j + 1] = arr[j];\n      j--;\n    }\n    arr[j + 1] = current;\n  }\n  return arr;\n}`,
                     python: `def insertion_sort(arr):\n    for i in range(1, len(arr)):\n        key = arr[i]\n        j = i-1\n        while j >= 0 and key < arr[j] :\n                arr[j + 1] = arr[j]\n                j -= 1\n        arr[j + 1] = key`,
@@ -113,14 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             'Shell Sort': {
                 complexity: { time: 'O(n log² n)', space: 'O(1)' },
-                explanation: [
-                    'Start with a large gap, then reduce the gap.',
-                    'The gap sequence can be n/2, n/4, ..., 1.',
-                    'For each gap, perform an insertion sort for elements at that gap distance.',
-                    'This means comparing elements that are `gap` indices apart.',
-                    'Reducing the gap allows the algorithm to sort elements that are far apart, then closer together.',
-                    'The final pass with a gap of 1 is a regular insertion sort, but on a nearly sorted array.'
-                ],
                 code: {
                     javascript: `function shellSort(arr) {\n  let n = arr.length;\n  for (let gap = Math.floor(n/2); gap > 0; gap = Math.floor(gap/2)) {\n    for (let i = gap; i < n; i += 1) {\n      let temp = arr[i];\n      let j;\n      for (j = i; j >= gap && arr[j-gap] > temp; j-=gap) {\n        arr[j] = arr[j-gap];\n      }\n      arr[j] = temp;\n    }\n  }\n  return arr;\n}`,
                     python: `def shell_sort(arr):\n    n = len(arr)\n    gap = n//2\n    while gap > 0:\n        for i in range(gap,n):\n            temp = arr[i]\n            j = i\n            while j >= gap and arr[j-gap] > temp:\n                arr[j] = arr[j-gap]\n                j -= gap\n            arr[j] = temp\n        gap //= 2`,
@@ -128,14 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     java: `class ShellSort {\n    int sort(int arr[]) {\n        int n = arr.length;\n        for (int gap = n/2; gap > 0; gap /= 2) {\n            for (int i = gap; i < n; i += 1) {\n                int temp = arr[i];\n                int j;\n                for (j = i; j >= gap && arr[j - gap] > temp; j -= gap)\n                    arr[j] = arr[j - gap];\n                arr[j] = temp;\n            }\n        }\n        return 0;\n    }\n}`
                 }
             },
-            'Merge Sort': {
+'Merge Sort': {
                 complexity: { time: 'O(n log n)', space: 'O(n)' },
-                explanation: [
-                    'Divide the unsorted list into n sublists, each containing one element (a list of one element is considered sorted).',
-                    'Repeatedly merge sublists to produce new sorted sublists until there is only one sublist remaining.',
-                    'This is done by comparing the first elements of two sublists and adding the smaller one to the result.',
-                    'This process is recursive and is known as the divide-and-conquer strategy.'
-                ],
                 code: {
                     javascript: `function mergeSort(arr) {\n  if (arr.length <= 1) return arr;\n  const mid = Math.floor(arr.length / 2);\n  const left = mergeSort(arr.slice(0, mid));\n  const right = mergeSort(arr.slice(mid));\n\n  let i = 0, j = 0, k = 0;\n  const result = [];\n  while (i < left.length && j < right.length) {\n    if (left[i] < right[j]) {\n      result[k++] = left[i++];\n    } else {\n      result[k++] = right[j++];\n    }\n  }\n  while (i < left.length) result[k++] = left[i++];\n  while (j < right.length) result[k++] = right[j++];\n  return result;\n}`,
                     python: `def merge_sort(arr):\n    if len(arr) > 1:\n        mid = len(arr)//2\n        L = arr[:mid]\n        R = arr[mid:]\n        merge_sort(L)\n        merge_sort(R)\n        i = j = k = 0\n        while i < len(L) and j < len(R):\n            if L[i] < R[j]:\n                arr[k] = L[i]\n                i += 1\n            else:\n                arr[k] = R[j]\n                j += 1\n            k += 1\n        while i < len(L):\n            arr[k] = L[i]\n            i += 1\n            k += 1\n        while j < len(R):\n            arr[k] = R[j]\n            j += 1\n            k += 1`,
@@ -145,12 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             'Quick Sort': {
                 complexity: { time: 'O(n log n)', space: 'O(log n)' },
-                explanation: [
-                    'Pick an element, called a pivot, from the array.',
-                    'Partitioning: reorder the array so that all elements with values less than the pivot come before the pivot, while all elements with values greater than the pivot come after it.',
-                    'After partitioning, the pivot is in its final position. This is called the partition operation.',
-                    'Recursively apply the above steps to the sub-array of elements with smaller values and separately to the sub-array of elements with greater values.'
-                ],
                 code: {
                     javascript: `function quickSort(arr, low, high) {\n  if (low < high) {\n    let pi = partition(arr, low, high);\n    quickSort(arr, low, pi - 1);\n    quickSort(arr, pi + 1, high);\n  }\n  return arr;\n}\n\nfunction partition(arr, low, high) {\n  let pivot = arr[high];\n  let i = low - 1;\n  for (let j = low; j < high; j++) {\n    if (arr[j] < pivot) {\n      i++;\n      [arr[i], arr[j]] = [arr[j], arr[i]];\n    }\n  }\n  [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];\n  return i + 1;\n}`,
                     python: `def partition(arr, low, high):\n    i = (low-1)\n    pivot = arr[high]\n    for j in range(low, high):\n        if arr[j] <= pivot:\n            i = i+1\n            arr[i], arr[j] = arr[j], arr[i]\n    arr[i+1], arr[high] = arr[high], arr[i+1]\n    return (i+1)\n\ndef quick_sort(arr, low, high):\n    if len(arr) == 1:\n        return arr\n    if low < high:\n        pi = partition(arr, low, high)\n        quick_sort(arr, low, pi-1)\n        quick_sort(arr, pi + 1, high)`,
@@ -162,13 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
         searching: {
             'Linear Search': {
                 complexity: { time: 'O(n)', space: 'O(1)' },
-                explanation: [
-                    'Start from the leftmost element of the array and one by one compare the target value with each element of the array.',
-                    'If the target value matches an element, return the index.',
-                    'If the target value is not found after checking all elements, return -1.'
-                ],
                 code: {
-                    javascript: `function linearSearch(arr, key) {\n  for(let i = 0; i < arr.length; i++){\n    if(arr[i] === key) return i;\n  }\n  return -1;\n}`,
+                    javascript: `function linearSearch(arr, key) {\n  for(let i = 0; i < arr.length; i++){`,
                     python: `def linear_search(arr, x):\n    for i in range(len(arr)):\n        if arr[i] == x:\n            return i\n    return -1`,
                     cpp: `int linearSearch(int arr[], int n, int x) {\n    for (int i = 0; i < n; i++)\n        if (arr[i] == x)\n            return i;\n    return -1;\n}`,
                     java: `class LinearSearch {\n    public static int linearSearch(int arr[], int x) {\n        int n = arr.length;\n        for(int i = 0; i < n; i++) {\n            if(arr[i] == x)\n                return i;\n        }\n        return -1;\n    }\n}`
@@ -176,14 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             'Binary Search': {
                 complexity: { time: 'O(log n)', space: 'O(1)' },
-                explanation: [
-                    'This algorithm works on a sorted array.',
-                    'Compare the target value with the middle element of the array.',
-                    'If the target value matches the middle element, its index is returned.',
-                    'If the target value is less than the middle element, narrow the search to the lower half of the array.',
-                    'If the target value is greater than the middle element, narrow the search to the upper half.',
-                    'Repeat the process until the value is found or the search interval is empty.'
-                ],
                 code: {
                     javascript: `function binarySearch(arr, key) {\n  let start = 0, end = arr.length - 1;\n  while (start <= end) {\n    let mid = Math.floor((start + end) / 2);\n    if (arr[mid] === key) return mid;\n    else if (arr[mid] < key) start = mid + 1;\n    else end = mid - 1;\n  }\n  return -1;\n}`,
                     python: `def binary_search(arr, low, high, x):\n    if high >= low:\n        mid = (high + low) // 2\n        if arr[mid] == x:\n            return mid\n        elif arr[mid] > x:\n            return binary_search(arr, low, mid - 1, x)\n        else:\n            return binary_search(arr, mid + 1, high, x)\n    else:\n        return -1`,
@@ -191,46 +86,45 @@ document.addEventListener('DOMContentLoaded', () => {
                     java: `class BinarySearch {\n    int binarySearch(int arr[], int l, int r, int x) {\n        if (r >= l) {\n            int mid = l + (r - l) / 2;\n            if (arr[mid] == x) return mid;\n            if (arr[mid] > x) return binarySearch(arr, l, mid - 1, x);\n            return binarySearch(arr, mid + 1, r, x);\n        }\n        return -1;\n    }\n}`
                 }
             },
-        },
-        string: {
-            'Palindrome': {
-                complexity: { time: 'O(n)', space: 'O(1)' },
-                explanation: [
-                    'A palindrome is a word, phrase, number, or other sequence of characters that reads the same backward as forward.',
-                    'Use two pointers, one at the beginning and one at the end of the string.',
-                    'Compare the characters at the two pointers.',
-                    'If the characters are not the same, the string is not a palindrome.',
-                    'Move the pointers towards the center of the string.',
-                    'If the pointers cross or meet, the string is a palindrome.'
-                ],
-                code: {
-                    javascript: `function isPalindrome(str) {\n  const len = str.length;\n  for (let i = 0; i < len / 2; i++) {\n    if (str[i] !== str[len - 1 - i]) {\n      return false;\n    }\n  }\n  return true;\n}`,
-                    python: `def is_palindrome(s):\n    return s == s[::-1]`,
-                    cpp: `bool isPalindrome(string S) {\n    string P = S;\n    reverse(P.begin(), P.end());\n    if (S == P) {\n        return true;\n    }\n    else {\n        return false;\n    }\n}`,
-                    java: `class Palindrome {\n    boolean isPalindrome(String str) {\n        int i = 0, j = str.length() - 1;\n        while (i < j) {\n            if (str.charAt(i) != str.charAt(j))\n                return false;\n            i++;\n            j--;\n        }\n        return true;\n    }\n}`
-                }
-            }
         }
     };
+
+    const algorithmList = document.getElementById('algorithm-list');
+    const searchInputContainer = document.getElementById('search-input-container');
+    const searchInput = document.getElementById('search-input');
+    const timeComplexityEl = document.getElementById('time-complexity');
+    const spaceComplexityEl = document.getElementById('space-complexity');
+    const codeBlock = document.getElementById('code-block');
+    const langButtons = document.querySelectorAll('.lang-btn');
+    const viewButtons = document.querySelectorAll('.view-btn');
+    const playBtn = document.getElementById('play-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const speedSlider = document.getElementById('speed-slider');
+    const codeContainer = document.getElementById('code-container');
+    const explainBtn = document.getElementById('explain-btn');
+    const customCodeInput = document.getElementById('custom-code-input');
+    const explanationOutput = document.getElementById('explanation-output');
+    const toggleExplainBtn = document.getElementById('toggle-explain-btn');
+    const explainContent = document.getElementById('explain-content');
+
+    let currentAlgorithm = 'Bubble Sort';
+    let currentCategory = 'sorting';
+    let currentLang = 'javascript';
+    let currentView = 'bars';
+    let animationSpeed = 45;
+    let sketch;
 
     function getAlgoData(category, name) { return algorithms[category][name]; }
 
     function updateUIForAlgorithm() {
-        languageSelector.style.display = 'flex';
-        explanationAndComplexityContainer.style.display = 'block'; // Show the container
-        explanationContainer.style.display = 'none'; // Hide explanation by default
-        codeContainer.style.display = 'flex';
-        customCodeContainer.style.display = 'none';
-        guideBtn.style.display = 'none';
-
         const algoData = getAlgoData(currentCategory, currentAlgorithm);
         timeComplexityEl.textContent = algoData.complexity.time;
         spaceComplexityEl.textContent = algoData.complexity.space;
-        searchInputContainer.style.display = currentCategory === 'searching' || currentCategory === 'string' ? 'flex' : 'none';
+        searchInputContainer.style.display = currentCategory === 'searching' ? 'flex' : 'none';
         updateCodeView();
         if (sketch) sketch.reset();
     }
-
 
     function updateCodeView() {
         const algo = getAlgoData(currentCategory, currentAlgorithm);
@@ -268,8 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateUIForAlgorithm();
     }
 
-
-
     langButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             currentLang = btn.dataset.lang;
@@ -279,85 +171,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    const guideBtn = document.getElementById('guide-btn');
-    const guideModal = document.getElementById('guide-modal');
-    const closeBtn = document.querySelector('.close-btn');
-
-    guideBtn.addEventListener('click', () => {
-        guideModal.style.display = 'block';
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentView = btn.dataset.view;
+            viewButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (sketch) sketch.reset();
+        });
     });
-
-    closeBtn.addEventListener('click', () => {
-        guideModal.style.display = 'none';
-    });
-
-    window.addEventListener('click', (event) => {
-        if (event.target == guideModal) {
-            guideModal.style.display = 'none';
-        }
-    });
-
-    customAlgoBtn.addEventListener('click', () => {
-        currentAlgorithm = 'Custom';
-        document.querySelectorAll('#algorithm-list li.active').forEach(item => item.classList.remove('active'));
-        languageSelector.style.display = 'none';
-        explanationAndComplexityContainer.style.display = 'none';
-        codeContainer.style.display = 'none';
-        customCodeContainer.style.display = 'flex';
-        guideBtn.style.display = 'block';
-
-        if (!customCodeEditor.getValue()) {
-            customCodeEditor.setValue(`function* isPalindrome(str) {\n  const len = str.length;\n  for (let i = 0; i < len / 2; i++) {\n    // Highlight the characters being compared\n    states[i] = 0;\n    states[len - 1 - i] = 0;\n    yield;\n\n    if (str[i] !== str[len - 1 - i]) {\n      // Not a palindrome, highlight the mismatched characters in red\n      states[i] = 1;\n      states[len - 1 - i] = 1;\n      yield;\n      return false;\n    }\n\n    // Characters match, highlight them in green\n    states[i] = 2;\n    states[len - 1 - i] = 2;\n    yield;\n  }\n\n  return true;\n}`);
-        }
-        if (sketch) sketch.reset();
-    });
-
-
 
     speedSlider.addEventListener('input', e => {
         animationSpeed = e.target.value;
         if (sketch) sketch.frameRate(parseInt(animationSpeed));
     });
 
-    visualizeCustomCodeBtn.addEventListener('click', () => {
-        if (worker) {
-            worker.terminate();
+    toggleExplainBtn.addEventListener('click', () => {
+        explainContent.classList.toggle('hidden');
+        const icon = toggleExplainBtn.querySelector('i');
+        icon.classList.toggle('fa-chevron-down');
+        icon.classList.toggle('fa-chevron-up');
+    });
+
+    explainBtn.addEventListener('click', async () => {
+        const code = customCodeInput.value.trim();
+        if (!code) {
+            explanationOutput.innerText = "Please enter some code first.";
+            return;
         }
-        worker = new Worker('worker.js');
-        worker.postMessage({ code: customCodeEditor.getValue(), values });
-        visualizeCustomCodeBtn.innerText = 'Analyzing...';
-        worker.onmessage = function(event) {
-            if (event.data.error) {
-                alert(event.data.error);
-                visualizeCustomCodeBtn.innerText = 'Visualize';
-                return;
+        explanationOutput.innerText = "Analyzing...";
+        try {
+            const response = await fetch("http://localhost:3000/analyze", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code })
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-            const { time, space, explanation: customExplanation, steps } = event.data;
-            timeComplexityEl.textContent = time;
-            spaceComplexityEl.textContent = space;
-            // If custom explanation is provided, display it in the explanationSteps
-            if (customExplanation) {
-                explanationSteps.innerHTML = '';
-                customExplanation.forEach(step => {
-                    const li = document.createElement('li');
-                    li.textContent = step;
-                    explanationSteps.appendChild(li);
-                });
-                explanationAndComplexityContainer.style.display = 'block';
-                explanationContainer.style.display = 'block';
-            } else {
-                explanationAndComplexityContainer.style.display = 'block';
-                explanationContainer.style.display = 'none';
-            }
-            visualizeCustomCodeBtn.innerText = 'Visualize';
-            sorter = (function*() {
-                for (const step of steps) {
-                    states = step;
-                    yield;
-                }
-            })();
-            sketch.loop();
-        };
+            const data = await response.json();
+            explanationOutput.innerText = data.summary;
+        } catch (error) {
+            explanationOutput.innerText = "Could not generate summary. Please try again.";
+        }
     });
 
     const s = (p) => {
@@ -370,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
             p.frameRate(animationSpeed);
         };
 
-        function draw() {
+        p.draw = () => {
             p.background('#1E1E1E');
             if (sorter) { 
                 let result = sorter.next();
@@ -379,33 +234,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     p.noLoop();
                 }
             }
-            if (currentCategory === 'string' || (currentAlgorithm === 'Custom' && typeof values[0] === 'string')) {
-                drawString();
-            } else {
-                drawArray();
-            }
+            if (currentView === 'bars') drawBars(); else drawArray();
         };
 
-        function drawString() {
-            let n = values.length;
-            let boxSize = p.min(p.width / (n + 1), 60);
-            let startX = (p.width - n * boxSize - (n - 1) * 5) / 2;
-            let y = p.height / 2;
-            for (let i = 0; i < n; i++) {
+        function drawBars() {
+            let w = p.width / values.length;
+            p.noStroke();
+            for (let i = 0; i < values.length; i++) {
                 if (values[i] === undefined) continue;
-                p.stroke(getColor(states[i]));
-                p.strokeWeight(3);
-                p.fill('#2a2a2a');
-                p.rect(startX + i * (boxSize + 5), y - boxSize / 2, boxSize, boxSize, 8);
-                p.noStroke();
-                p.fill('#E0E0E0');
-                p.textAlign(p.CENTER, p.CENTER);
-                p.textSize(boxSize * 0.5);
-                p.text(values[i], startX + i * (boxSize + 5) + boxSize / 2, y);
+                let grad = p.drawingContext.createLinearGradient(i * w, p.height, i * w, p.height - values[i]);
+                const baseColor = p.color(getColor(states[i]));
+                grad.addColorStop(0, baseColor);
+                grad.addColorStop(1, p.lerpColor(baseColor, p.color('#fff'), 0.3));
+                p.drawingContext.fillStyle = grad;
+                p.rect(i * w, p.height - values[i], w, values[i], 5, 5, 0, 0);
             }
         }
-
-
 
         function drawArray() {
             let n = values.length;
@@ -434,66 +278,37 @@ document.addEventListener('DOMContentLoaded', () => {
             return '#424242';
         }
 
-                p.reset = () => {
-                    p.noLoop();
-                    const customInput = document.getElementById('custom-input').value.trim();
+        p.reset = () => {
+            p.noLoop();
+            let numElements = currentView === 'bars' ? 50 : 12;
+            values = Array.from({ length: numElements }, () => p.floor(p.random(1, 100)));
+            if (currentView === 'bars' && p.height > 0) {
+                values = values.map(v => p.map(v, 1, 100, 15, p.height - 20));
+            }
+            states = new Array(values.length).fill(-1);
+            if (currentCategory === 'searching') {
+                values.sort((a, b) => a - b);
+                const targetValue = values[p.floor(p.random(values.length))];
+                searchInput.value = Math.floor(targetValue);
+            }
+            sorter = getSorter();
+            p.redraw();
+        };
 
-                    if (currentAlgorithm === 'Custom') {
-                        if (customInput) {
-                            if (customInput.includes(',')) {
-                                values = customInput.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
-                            } else {
-                                values = customInput.split('');
-                            }
-                        } else {
-                            // Default for custom if no input
-                            values = Array.from({ length: 12 }, () => p.floor(p.random(1, 100)));
-                        }
-                    } else if (currentCategory === 'string') {
-                        values = (customInput || 'level').split('');
-                    } else {
-                        let numElements = 12; // Default number of elements for array visualization
-                        values = Array.from({ length: numElements }, () => p.floor(p.random(1, 100)));
-                        if (currentCategory === 'searching') {
-                            values.sort((a, b) => a - b);
-                            const targetValue = values[p.floor(p.random(values.length))];
-                            searchInput.value = Math.floor(targetValue);
-                        }
-                    }
+        function getSorter() {
+            let target = parseInt(searchInput.value);
+            switch (currentAlgorithm) {
+                case 'Bubble Sort': return bubbleSort(values, states);
+                case 'Selection Sort': return selectionSort(values, states);
+                case 'Insertion Sort': return insertionSort(values, states);
+                case 'Shell Sort': return shellSort(values, states);
+                case 'Merge Sort': return mergeSort(values, 0, values.length - 1, states);
+                case 'Quick Sort': return quickSort(values, 0, values.length - 1, states);
+                case 'Linear Search': return linearSearch(values, states, target);
+                case 'Binary Search': return binarySearch(values, states, target);
+            }
+        }
 
-                    states = new Array(values.length).fill(-1);
-                    sorter = getSorter();
-                    p.redraw();
-                };
-        
-                function getSorter() {
-                    if (currentAlgorithm === 'Custom') {
-                        try {
-                            const userCode = customCodeEditor.getValue();
-                            // WARNING: Using eval can be a security risk. In a real-world application,
-                            // this should be handled in a more secure way, like using a Web Worker
-                            // with a sandboxed environment.
-                            const customAlgorithm = eval(`(${userCode})`);
-                            return customAlgorithm(values, states);
-                        } catch (e) {
-                            console.error("Error in custom algorithm:", e);
-                            alert("Error in your custom algorithm. Check the console for details.");
-                            return null;
-                        }
-                    }
-                    let target = parseInt(searchInput.value);
-                    switch (currentAlgorithm) {
-                        case 'Bubble Sort': return bubbleSort(values, states);
-                        case 'Selection Sort': return selectionSort(values, states);
-                        case 'Insertion Sort': return insertionSort(values, states);
-                        case 'Shell Sort': return shellSort(values, states);
-                        case 'Merge Sort': return mergeSort(values, 0, values.length - 1, states);
-                        case 'Quick Sort': return quickSort(values, 0, values.length - 1, states);
-                        case 'Linear Search': return linearSearch(values, states, target);
-                        case 'Binary Search': return binarySearch(values, states, target);
-                        case 'Palindrome': return isPalindrome(values, states);
-                    }
-                }
         function* bubbleSort(arr, states) {
             for (let i = 0; i < arr.length; i++) {
                 for (let j = 0; j < arr.length - i - 1; j++) {
@@ -708,33 +523,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-
-        function* isPalindrome(str, states) {
-            const len = str.length;
-            for (let i = 0; i < len / 2; i++) {
-                states[i] = 0;
-                states[len - 1 - i] = 0;
-                yield;
-
-                if (str[i] !== str[len - 1 - i]) {
-                    states[i] = 1;
-                    states[len - 1 - i] = 1;
-                    yield;
-                    return false;
-                }
-
-                states[i] = 2;
-                states[len - 1 - i] = 2;
-                yield;
-            }
-
-            return true;
-        }
     };
 
     sketch = new p5(s);
     setupSidebar();
 
+    
     playBtn.addEventListener('click', () => sketch.loop());
     pauseBtn.addEventListener('click', () => sketch.noLoop());
     resetBtn.addEventListener('click', () => sketch.reset());
