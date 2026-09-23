@@ -9,8 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -25,7 +23,6 @@
                 <h2> AlgoVision</h2>
                 <!-- <h2>Algorithms</h2> -->
                 <ul id="algorithm-list"></ul>
-                <button id="custom-algo-btn">Custom Algorithm</button>
             </div>
             <div id="attribution">
                 <i class="fas fa-code"></i>
@@ -42,32 +39,8 @@
                 <button class="lang-btn" data-lang="java">Java</button>
             </div>
             <div id="code-container">
-                <div class="code-header">
-                    <span>Code</span>
-                    <button id="show-explanation-btn">Show Explanation</button>
-                </div>
+                <div class="code-header">Code</div>
                 <pre><code id="code-block" class="language-javascript"></code></pre>
-            </div>
-            <div id="explanation-and-complexity-container" style="display: none;">
-                <div id="algorithm-explanation">
-                    <h4>Algorithm Steps:</h4>
-                    <ol id="explanation-steps"></ol>
-                </div>
-                <div id="complexity-info">
-                    <div class="complexity-item">Time Complexity: <span id="time-complexity"></span></div>
-                    <div class="complexity-item">Space Complexity: <span id="space-complexity"></span></div>
-                </div>
-            </div>
-            <div id="custom-code-container" style="display: none;">
-                <div class="code-header">
-                    <span>Custom JavaScript Code</span>
-                    <button id="guide-btn">How to Write Algorithms</button>
-                </div>
-                <textarea id="custom-code-editor" placeholder="Enter your generator function here..."></textarea>
-                <div id="custom-input-container">
-                    <textarea id="custom-input" placeholder="Enter input as a comma-separated list (e.g., 5,2,8,1) or a string."></textarea>
-                </div>
-                <button id="visualize-custom-code-btn">Visualize</button>
             </div>
             <div class="visualization-wrapper">
                 <div id="vis-header">
@@ -82,68 +55,32 @@
                 <div class="complexity-item">Time Complexity: <span id="time-complexity"></span></div>
                 <div class="complexity-item">Space Complexity: <span id="space-complexity"></span></div>
             </div>
-            <div id="explanation-container" style="display: none;">
-                <div class="code-header">Explanation</div>
-                <div id="explanation"></div>
-            </div>
             <div id="controls">
                 <div class="playback-controls">
                     <button id="play-btn"><i class="fas fa-play"></i> Play</button>
                     <button id="pause-btn"><i class="fas fa-pause"></i> Pause</button>
                     <button id="reset-btn"><i class="fas fa-sync-alt"></i> Reset</button>
                 </div>
-
+                <div id="view-selector">
+                    <button class="view-btn active" data-view="bars"><i class="fas fa-chart-bar"></i> Bars</button>
+                    <button class="view-btn" data-view="array"><i class="fas fa-grip-horizontal"></i> Array</button>
+                </div>
                 <div class="speed-control">
                     <i class="fas fa-tachometer-alt"></i>
                     <input type="range" id="speed-slider" min="1" max="120" value="45">
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div id="guide-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2>How to Write Custom Algorithms</h2>
-            <p>This guide will walk you through the process of writing a custom algorithm for this platform.</p>
-            <h3>Generator Functions</h3>
-            <p>The most important thing to understand is that your algorithm must be a generator function. A generator function is a special type of function that can be paused and resumed, allowing us to visualize the state of the algorithm at each step.</p>
-            <p>A generator function is defined using the `function*` syntax. Inside the function, you can use the `yield` keyword to pause the execution of the function and return a value. When the function is resumed, it will continue from where it left off.</p>
-            <h3>Example: Palindrome Checker</h3>
-            <p>Here is an example of a palindrome checker written as a generator function:</p>
-            <pre><code class="language-javascript">function* isPalindrome(str) {
-  const len = str.length;
-  for (let i = 0; i < len / 2; i++) {
-    // Highlight the characters being compared
-    states[i] = 0;
-    states[len - 1 - i] = 0;
-    yield;
-
-    if (str[i] !== str[len - 1 - i]) {
-      // Not a palindrome, highlight the mismatched characters in red
-      states[i] = 1;
-      states[len - 1 - i] = 1;
-      yield;
-      return false;
-    }
-
-    // Characters match, highlight them in green
-    states[i] = 2;
-    states[len - 1 - i] = 2;
-    yield;
-  }
-
-  return true;
-}</code></pre>
-            <h3>States</h3>
-            <p>The `states` array is used to keep track of the state of each element in the array or string being visualized. The following states are available:</p>
-            <ul>
-                <li>`0`: Comparing (blue)</li>
-                <li>`1`: Swapping/Mismatch (red)</li>
-                <li>`2`: Sorted/Match (green)</li>
-                <li>`3`: Pivot/Special (purple)</li>
-            </ul>
-            <p>By updating the `states` array and using the `yield` keyword, you can create a step-by-step visualization of your algorithm.</p>
+            <div id="explain-section">
+                <div class="explain-header">
+                    <h3>🧩 Explain Algorithm</h3>
+                    <button id="toggle-explain-btn"><i class="fas fa-chevron-down"></i></button>
+                </div>
+                <div id="explain-content" class="hidden">
+                    <textarea id="custom-code-input" placeholder="Paste your algorithm code here..."></textarea>
+                    <button id="explain-btn">Explain</button>
+                    <div id="explanation-output"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -154,8 +91,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
