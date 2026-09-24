@@ -32,50 +32,51 @@
             </div>
         </div>
         <div class="main-content">
-            <div id="language-selector">
-                <button class="lang-btn active" data-lang="javascript">JavaScript</button>
-                <button class="lang-btn" data-lang="python">Python</button>
-                <button class="lang-btn" data-lang="cpp">C++</button>
-                <button class="lang-btn" data-lang="java">Java</button>
-            </div>
-            <div id="code-container">
-                <div class="code-header">Code</div>
-                <pre><code id="code-block" class="language-javascript"></code></pre>
-            </div>
-            <div class="visualization-wrapper">
-                <div id="vis-header">
-                    <div id="search-input-container">
-                        <label for="search-input">Search for:</label>
-                        <input type="number" id="search-input" placeholder="Value">
+            <div id="algorithm-display-section">
+                <div id="language-selector">
+                    <button class="lang-btn active" data-lang="javascript">JavaScript</button>
+                    <button class="lang-btn" data-lang="python">Python</button>
+                    <button class="lang-btn" data-lang="cpp">C++</button>
+                    <button class="lang-btn" data-lang="java">Java</button>
+                </div>
+                <div id="code-container">
+                    <div class="code-header">Code</div>
+                    <pre><code id="code-block" class="language-javascript"></code></pre>
+                </div>
+                <div class="visualization-wrapper">
+                    <div id="vis-header">
+                        <div id="search-input-container">
+                            <label for="search-input">Search for:</label>
+                            <input type="number" id="search-input" placeholder="Value">
+                        </div>
+                    </div>
+                    <div id="visualization-container"></div>
+                </div>
+                <div id="complexity-info">
+                    <div class="complexity-item">Time Complexity: <span id="time-complexity"></span></div>
+                    <div class="complexity-item">Space Complexity: <span id="space-complexity"></span></div>
+                </div>
+                <div id="controls">
+                    <div class="playback-controls">
+                        <button id="play-btn"><i class="fas fa-play"></i> Play</button>
+                        <button id="pause-btn"><i class="fas fa-pause"></i> Pause</button>
+                        <button id="reset-btn"><i class="fas fa-sync-alt"></i> Reset</button>
+                    </div>
+                    <div id="view-selector">
+                        <button class="view-btn active" data-view="bars"><i class="fas fa-chart-bar"></i> Bars</button>
+                        <button class="view-btn" data-view="array"><i class="fas fa-grip-horizontal"></i> Array</button>
+                    </div>
+                    <div class="speed-control">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <input type="range" id="speed-slider" min="1" max="120" value="45">
                     </div>
                 </div>
-                <div id="visualization-container"></div>
             </div>
-            <div id="complexity-info">
-                <div class="complexity-item">Time Complexity: <span id="time-complexity"></span></div>
-                <div class="complexity-item">Space Complexity: <span id="space-complexity"></span></div>
-            </div>
-            <div id="controls">
-                <div class="playback-controls">
-                    <button id="play-btn"><i class="fas fa-play"></i> Play</button>
-                    <button id="pause-btn"><i class="fas fa-pause"></i> Pause</button>
-                    <button id="reset-btn"><i class="fas fa-sync-alt"></i> Reset</button>
-                </div>
-                <div id="view-selector">
-                    <button class="view-btn active" data-view="bars"><i class="fas fa-chart-bar"></i> Bars</button>
-                    <button class="view-btn" data-view="array"><i class="fas fa-grip-horizontal"></i> Array</button>
-                </div>
-                <div class="speed-control">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <input type="range" id="speed-slider" min="1" max="120" value="45">
-                </div>
-            </div>
-            <div id="explain-section">
+            <div id="code-explanation-section" style="display: none;">
                 <div class="explain-header">
-                    <h3>🧩 Explain Algorithm</h3>
-                    <button id="toggle-explain-btn"><i class="fas fa-chevron-down"></i></button>
+                    <h3>🧩 Explain Custom Code</h3>
                 </div>
-                <div id="explain-content" class="hidden">
+                <div id="explain-content-custom">
                     <textarea id="custom-code-input" placeholder="Paste your algorithm code here..."></textarea>
                     <button id="explain-btn">Explain</button>
                     <div id="explanation-output"></div>
@@ -91,6 +92,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
