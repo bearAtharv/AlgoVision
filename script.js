@@ -90,6 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const algorithmList = document.getElementById('algorithm-list');
+    const algorithmDisplaySection = document.getElementById('algorithm-display-section');
+    const codeExplanationSection = document.getElementById('code-explanation-section');
+
     const searchInputContainer = document.getElementById('search-input-container');
     const searchInput = document.getElementById('search-input');
     const timeComplexityEl = document.getElementById('time-complexity');
@@ -101,12 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const pauseBtn = document.getElementById('pause-btn');
     const resetBtn = document.getElementById('reset-btn');
     const speedSlider = document.getElementById('speed-slider');
-    const codeContainer = document.getElementById('code-container');
-    const explainBtn = document.getElementById('explain-btn');
     const customCodeInput = document.getElementById('custom-code-input');
+    const explainBtn = document.getElementById('explain-btn');
     const explanationOutput = document.getElementById('explanation-output');
-    const toggleExplainBtn = document.getElementById('toggle-explain-btn');
-    const explainContent = document.getElementById('explain-content');
 
     let currentAlgorithm = 'Bubble Sort';
     let currentCategory = 'sorting';
@@ -115,15 +115,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let animationSpeed = 45;
     let sketch;
 
-    function getAlgoData(category, name) { return algorithms[category][name]; }
+    function getAlgoData(category, name) { 
+        if (category === 'explanation') return null; // No specific data for explanation section
+        return algorithms[category][name]; 
+    }
 
     function updateUIForAlgorithm() {
-        const algoData = getAlgoData(currentCategory, currentAlgorithm);
-        timeComplexityEl.textContent = algoData.complexity.time;
-        spaceComplexityEl.textContent = algoData.complexity.space;
-        searchInputContainer.style.display = currentCategory === 'searching' ? 'flex' : 'none';
-        updateCodeView();
-        if (sketch) sketch.reset();
+        if (currentCategory === 'explanation') {
+            algorithmDisplaySection.style.display = 'none';
+            codeExplanationSection.style.display = 'flex';
+        } else {
+            algorithmDisplaySection.style.display = 'flex';
+            codeExplanationSection.style.display = 'none';
+
+            const algoData = getAlgoData(currentCategory, currentAlgorithm);
+            timeComplexityEl.textContent = algoData.complexity.time;
+            spaceComplexityEl.textContent = algoData.complexity.space;
+            searchInputContainer.style.display = currentCategory === 'searching' ? 'flex' : 'none';
+            updateCodeView();
+            if (sketch) sketch.reset();
+        }
     }
 
     function updateCodeView() {
@@ -155,6 +166,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 algorithmList.appendChild(li);
             });
         });
+        // Add Code Explanation section
+        const explanationHeader = document.createElement('li');
+        explanationHeader.className = 'algo-subheader';
+        explanationHeader.textContent = 'Code Explanation';
+        algorithmList.appendChild(explanationHeader);
+
+        const customCodeLi = document.createElement('li');
+        customCodeLi.textContent = 'Explain Custom Code';
+        customCodeLi.dataset.alg = 'Custom Code';
+        customCodeLi.dataset.cat = 'explanation';
+        customCodeLi.addEventListener('click', () => {
+            currentAlgorithm = 'Custom Code';
+            currentCategory = 'explanation';
+            document.querySelectorAll('#algorithm-list li.active').forEach(item => item.classList.remove('active'));
+            customCodeLi.classList.add('active');
+            updateUIForAlgorithm();
+        });
+        algorithmList.appendChild(customCodeLi);
+
+        // Set initial active algorithm
         const firstAlgo = algorithmList.querySelector('li[data-alg]');
         firstAlgo.classList.add('active');
         currentAlgorithm = firstAlgo.dataset.alg;
@@ -185,12 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sketch) sketch.frameRate(parseInt(animationSpeed));
     });
 
-    toggleExplainBtn.addEventListener('click', () => {
-        explainContent.classList.toggle('hidden');
-        const icon = toggleExplainBtn.querySelector('i');
-        icon.classList.toggle('fa-chevron-down');
-        icon.classList.toggle('fa-chevron-up');
-    });
+
 
     explainBtn.addEventListener('click', async () => {
         const code = customCodeInput.value.trim();
@@ -209,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            explanationOutput.innerText = data.summary;
+            explanationOutput.innerHTML = marked.parse(data.summary);
         } catch (error) {
             explanationOutput.innerText = "Could not generate summary. Please try again.";
         }

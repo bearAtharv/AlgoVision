@@ -18,7 +18,9 @@ app.post("/analyze", async (req, res) => {
     return res.status(400).json({ summary: "Please enter some code first." });
   }
 
-  const prompt = `Explain this code: ${code}`;
+  const prompt = `Summarize the following code in short, concise Markdown format:
+
+${code}`;
   const ollamaApiUrl = "http://localhost:11434/api/generate";
   const modelName = "tinyllama:1.1b";
 
