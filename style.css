@@ -15,7 +15,10 @@ body { font-family: 'Inter', sans-serif; background-color: #121212; color: #E0E0
 #sidebar h2 { color: #fff; margin-top: 0; }
 #algorithm-list { list-style: none; padding: 0; margin: 0; }
 .algo-subheader { color: #888; font-weight: bold; margin-top: 20px; margin-bottom: 10px; padding-left: 5px; text-transform: uppercase; font-size: 0.9em; }
-#algorithm-list li { padding: 12px 15px; cursor: pointer; border-radius: 5px; margin-bottom: 8px; transition: background-color 0.2s; border-left: 3px solid transparent; }
+#algorithm-list li { padding: 12px 15px; cursor: pointer; border-radius: 5px; margin-bottom: 8px; transition: background-color 0.2s; border-left: 3px solid transparent; display: flex; justify-content: space-between; align-items: center; }
+.algo-info-icon { color: #666; cursor: pointer; transition: color 0.2s; }
+.algo-info-icon:hover { color: #00A99D; }
+
 #algorithm-list li:hover { background-color: #2a2a2a; }
 #algorithm-list li.active { background-color: #2a2a2a; border-left: 3px solid #00A99D; font-weight: 500; }
 #attribution { padding-top: 20px; text-align: center; color: #666; font-size: 0.9em; }
