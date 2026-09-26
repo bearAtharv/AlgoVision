@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const algorithms = {
         sorting: {
             'Bubble Sort': {
+                description: `Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order. The pass through the list is repeated until the list is sorted. The algorithm, which is a comparison sort, is named for the way smaller or larger elements "bubble" to the top of the list. Although the algorithm is simple, it is too slow and impractical for most problems even when compared to insertion sort.`,
                 complexity: { time: 'O(n²)', space: 'O(1)' },
                 code: {
                     javascript: `function bubbleSort(arr) {\n  for (let i = 0; i < arr.length; i++) {\n    for (let j = 0; j < arr.length - i - 1; j++) {\n      if (arr[j] > arr[j + 1]) {\n        let temp = arr[j];\n        arr[j] = arr[j+1];\n        arr[j+1] = temp;\n      }\n    }\n  }\n  return arr;\n}`,
@@ -22,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             'Selection Sort': {
+                description: `Selection sort is an in-place comparison sorting algorithm. It has an O(n²) time complexity, which makes it inefficient on large lists, and generally performs worse than the similar insertion sort. Selection sort is noted for its simplicity and has performance advantages over more complicated algorithms in certain situations, particularly where auxiliary memory is limited.`,
                 complexity: { time: 'O(n²)', space: 'O(1)' },
                 code: {
                     javascript: `function selectionSort(arr) {\n  for (let i = 0; i < arr.length; i++) {\n    let min = i;\n    for (let j = i + 1; j < arr.length; j++) {\n      if (arr[j] < arr[min]) min = j;\n    }\n    if (min !== i) [arr[i], arr[min]] = [arr[min], arr[i]];\n  }\n  return arr;\n}`,
@@ -31,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             'Insertion Sort': {
+                description: `Insertion sort is a simple sorting algorithm that builds the final sorted array one item at a time. It is much less efficient on large lists than more advanced algorithms such as quicksort, heapsort, or merge sort. However, insertion sort provides several advantages: simple implementation, efficient for (quite) small data sets, and more efficient in practice than most other simple quadratic (i.e., O(n²)) algorithms such as selection sort or bubble sort.`,
                 complexity: { time: 'O(n²)', space: 'O(1)' },
                 code: {
                     javascript: `function insertionSort(arr) {\n  for (let i = 1; i < arr.length; i++) {\n    let current = arr[i];\n    let j = i - 1;\n    while ((j > -1) && (current < arr[j])) {\n      arr[j + 1] = arr[j];\n      j--;\n    }\n    arr[j + 1] = current;\n  }\n  return arr;\n}`,
@@ -40,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             'Shell Sort': {
+                description: `Shell sort is a generalization of insertion sort that allows the exchange of items that are far apart. The idea is to arrange the list of elements so that, starting anywhere, considering every nth element gives a sorted list. Such a list is said to be h-sorted. The method is also known as Shell's method, after its inventor, Donald Shell.`,
                 complexity: { time: 'O(n log² n)', space: 'O(1)' },
                 code: {
                     javascript: `function shellSort(arr) {\n  let n = arr.length;\n  for (let gap = Math.floor(n/2); gap > 0; gap = Math.floor(gap/2)) {\n    for (let i = gap; i < n; i += 1) {\n      let temp = arr[i];\n      let j;\n      for (j = i; j >= gap && arr[j-gap] > temp; j-=gap) {\n        arr[j] = arr[j-gap];\n      }\n      arr[j] = temp;\n    }\n  }\n  return arr;\n}`,
@@ -49,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
 'Merge Sort': {
+                description: `Merge sort is an efficient, general-purpose, comparison-based sorting algorithm. Most implementations produce a stable sort, which means that the order of equal elements is the same in the input and output. Merge sort is a divide and conquer algorithm that was invented by John von Neumann in 1945.`,
                 complexity: { time: 'O(n log n)', space: 'O(n)' },
                 code: {
                     javascript: `function mergeSort(arr) {\n  if (arr.length <= 1) return arr;\n  const mid = Math.floor(arr.length / 2);\n  const left = mergeSort(arr.slice(0, mid));\n  const right = mergeSort(arr.slice(mid));\n\n  let i = 0, j = 0, k = 0;\n  const result = [];\n  while (i < left.length && j < right.length) {\n    if (left[i] < right[j]) {\n      result[k++] = left[i++];\n    } else {\n      result[k++] = right[j++];\n    }\n  }\n  while (i < left.length) result[k++] = left[i++];\n  while (j < right.length) result[k++] = right[j++];\n  return result;\n}`,
@@ -58,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             'Quick Sort': {
+                description: `Quicksort is an efficient sorting algorithm. Developed by British computer scientist Tony Hoare in 1959 and published in 1961, it is still a commonly used algorithm for sorting. When implemented well, it can be about two or three times faster than its main competitors, merge sort and heapsort.`,
                 complexity: { time: 'O(n log n)', space: 'O(log n)' },
                 code: {
                     javascript: `function quickSort(arr, low, high) {\n  if (low < high) {\n    let pi = partition(arr, low, high);\n    quickSort(arr, low, pi - 1);\n    quickSort(arr, pi + 1, high);\n  }\n  return arr;\n}\n\nfunction partition(arr, low, high) {\n  let pivot = arr[high];\n  let i = low - 1;\n  for (let j = low; j < high; j++) {\n    if (arr[j] < pivot) {\n      i++;\n      [arr[i], arr[j]] = [arr[j], arr[i]];\n    }\n  }\n  [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];\n  return i + 1;\n}`,
@@ -69,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         searching: {
             'Linear Search': {
+                description: `Linear search or sequential search is a method for finding an element within a list. It sequentially checks each element of the list until a match is found or the whole list has been searched. A linear search runs in at worst linear time and makes at most n comparisons, where n is the length of the list.`,
                 complexity: { time: 'O(n)', space: 'O(1)' },
                 code: {
                     javascript: `function linearSearch(arr, key) {\n  for(let i = 0; i < arr.length; i++){`,
@@ -78,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             'Binary Search': {
+                description: `Binary search, also known as half-interval search, logarithmic search, or binary chop, is a search algorithm that finds the position of a target value within a sorted array. Binary search compares the target value to the middle element of the array. If they are not equal, the half in which the target cannot lie is eliminated and the search continues on the remaining half, again taking the middle element to compare to the target value, and repeating this until the target value is found.`,
                 complexity: { time: 'O(log n)', space: 'O(1)' },
                 code: {
                     javascript: `function binarySearch(arr, key) {\n  let start = 0, end = arr.length - 1;\n  while (start <= end) {\n    let mid = Math.floor((start + end) / 2);\n    if (arr[mid] === key) return mid;\n    else if (arr[mid] < key) start = mid + 1;\n    else end = mid - 1;\n  }\n  return -1;\n}`,
@@ -153,9 +161,27 @@ document.addEventListener('DOMContentLoaded', () => {
             algorithmList.appendChild(header);
             Object.keys(algorithms[category]).forEach(name => {
                 const li = document.createElement('li');
-                li.textContent = name;
                 li.dataset.alg = name;
                 li.dataset.cat = category;
+
+                const algoName = document.createElement('span');
+                algoName.textContent = name;
+                li.appendChild(algoName);
+
+                const infoIcon = document.createElement('i');
+                infoIcon.className = 'fas fa-info-circle algo-info-icon';
+                infoIcon.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent li click event
+                    const algoData = getAlgoData(category, name);
+                    const modal = document.getElementById('steps-modal');
+                    const title = modal.querySelector('#modal-title');
+                    const body = modal.querySelector('#modal-body');
+                    title.textContent = `${name} - Description`;
+                    body.innerHTML = marked.parse(algoData.description);
+                    modal.style.display = 'block';
+                });
+                li.appendChild(infoIcon);
+
                 li.addEventListener('click', () => {
                     currentAlgorithm = name;
                     currentCategory = category;
@@ -555,9 +581,22 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSidebar();
 
     
+    const modal = document.getElementById('steps-modal');
+    const closeButton = document.querySelector('.close-button');
+
+    closeButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+
     playBtn.addEventListener('click', () => sketch.loop());
     pauseBtn.addEventListener('click', () => sketch.noLoop());
     resetBtn.addEventListener('click', () => sketch.reset());
 });
 
-// update: tweaked colors and contrast
+// Descriptions and complexity stats added
