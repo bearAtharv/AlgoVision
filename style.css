@@ -30,6 +30,15 @@ body { font-family: 'Inter', sans-serif; background-color: #121212; color: #E0E0
 .lang-btn.active { background-color: #00A99D; color: #fff; border-color: #00A99D; }
 #code-container { flex-grow: 1; display: flex; flex-direction: column; background-color: #1E1E1E; border-radius: 8px; border: 1px solid #333; overflow: hidden; }
 .code-header { padding: 10px 15px; background-color: #252526; border-bottom: 1px solid #333; color: #E0E0E0; font-weight: 500; }
+.graph-view-active #code-container {
+    height: 48%;
+    flex: none;
+}
+.graph-view-active .visualization-wrapper {
+    height: 48%;
+    flex: none;
+}
+
 pre[class*="language-"] { flex-grow: 1; margin: 0; overflow: auto; background: #1E1E1E !important; }
 .visualization-wrapper { flex-grow: 1; display: flex; flex-direction: column; margin-top: 20px; }
 #vis-header { display: flex; justify-content: flex-end; align-items: center; padding: 0 10px; margin-bottom: 10px; height: 30px;}
@@ -65,3 +74,61 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px
 #explain-btn:hover { background-color: #00877a; transform: translateY(-1px); }
 #explain-btn:active { transform: translateY(0); }
 #explanation-output { margin-top: 20px; padding: 20px; background-color: #252526; border-radius: 8px; min-height: 80px; white-space: pre-wrap; font-family: 'Inter', sans-serif; max-height: 400px; overflow-y: auto; border: 1px solid #333; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); line-height: 1.6; font-size: 0.95em; }
+
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 100; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.8);
+}
+
+.modal-content {
+    background-color: #1E1E1E;
+    margin: 5% auto;
+    padding: 40px;
+    border: 1px solid #333;
+    width: 80%;
+    max-width: 900px;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 35px;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+    line-height: 1.8;
+}
+
+#modal-body h3 {
+    color: #00A99D;
+}
+
+#modal-body code {
+    background-color: #2a2a2a;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+}
