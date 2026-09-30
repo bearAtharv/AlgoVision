@@ -1049,4 +1049,4 @@ public class DFS {
     resetBtn.addEventListener('click', () => sketch.reset());
 });
 
-// update: added bfs and dfs
+// Dijkstra shortest path
