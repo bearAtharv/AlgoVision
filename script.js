@@ -1049,4 +1049,4 @@ public class DFS {
     resetBtn.addEventListener('click', () => sketch.reset());
 });
 
-// Dijkstra shortest path
+// Shortest path node highlight fix
