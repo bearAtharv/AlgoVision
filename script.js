@@ -1048,5 +1048,3 @@ public class DFS {
     pauseBtn.addEventListener('click', () => sketch.noLoop());
     resetBtn.addEventListener('click', () => sketch.reset());
 });
-
-// Shortest path node highlight fix
