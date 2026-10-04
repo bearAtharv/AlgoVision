@@ -18,7 +18,7 @@ app.post("/analyze", async (req, res) => {
     return res.status(400).json({ summary: "Please enter some code first." });
   }
 
-  const prompt = `Summarize the following code in short, concise Markdown format:
+  const prompt = `Summarize the following code in short, concise Markdown format and if asked for code write the code, explain and define the topic in brief and explain as well in simple english language.:
 
 ${code}`;
   const ollamaApiUrl = "http://localhost:11434/api/generate";
