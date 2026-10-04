@@ -383,6 +383,9 @@ public class DFS {
     const customCodeInput = document.getElementById('custom-code-input');
     const explainBtn = document.getElementById('explain-btn');
     const explanationOutput = document.getElementById('explanation-output');
+    const customArrayContainer = document.getElementById('custom-array-container');
+    const customArrayInput = document.getElementById('custom-array-input');
+    const customArrayBtn = document.getElementById('custom-array-btn');
 
     const modal = document.getElementById('steps-modal');
     const closeButton = modal.querySelector('.close-button');
@@ -420,8 +423,12 @@ public class DFS {
 
             if (currentCategory === 'graph') {
                 document.querySelector('.main-content').classList.add('graph-view-active');
+                customArrayContainer.classList.add('hidden');
             } else {
                 document.querySelector('.main-content').classList.remove('graph-view-active');
+                if (currentView === 'array') {
+                    customArrayContainer.classList.remove('hidden');
+                }
             }
 
             const algoData = getAlgoData(currentCategory, currentAlgorithm);
@@ -526,6 +533,13 @@ public class DFS {
             currentView = btn.dataset.view;
             viewButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+
+            if (currentView === 'array') {
+                customArrayContainer.classList.remove('hidden');
+            } else {
+                customArrayContainer.classList.add('hidden');
+            }
+
             if (sketch) sketch.reset();
         });
     });
@@ -540,6 +554,20 @@ public class DFS {
             body.innerHTML = algoData.pseudocode.replace(/\n/g, '<br>');
             modal.style.display = 'block';
         }
+    });
+
+    customArrayBtn.addEventListener('click', () => {
+        const input = customArrayInput.value.trim();
+        if (input === '') {
+            alert('Please enter some numbers.');
+            return;
+        }
+        const customArray = input.split(/\s+/).map(Number);
+        if (customArray.some(isNaN)) {
+            alert('Invalid input. Please enter space-separated numbers only.');
+            return;
+        }
+        sketch.reset(customArray);
     });
 
     speedSlider.addEventListener('input', e => {
@@ -667,9 +695,24 @@ public class DFS {
             return '#424242';
         }
 
-        p.reset = () => {
+        p.reset = (customArray) => {
             p.noLoop();
-            if (currentCategory === 'graph') {
+            if (customArray && customArray.length > 0) {
+                values = [...customArray];
+                if (currentCategory === 'searching') {
+                    if (currentAlgorithm === 'Binary Search') {
+                        values.sort((a, b) => a - b);
+                    }
+                    const targetValue = values[p.floor(p.random(values.length))];
+                    searchInput.value = Math.floor(targetValue);
+                }
+                // Ensure array view is active for custom arrays
+                if (currentView !== 'array') {
+                    currentView = 'array';
+                    viewButtons.forEach(b => b.classList.remove('active'));
+                    document.querySelector('.view-btn[data-view="array"]').classList.add('active');
+                }
+            } else if (currentCategory === 'graph') {
                 setupGraph();
                 states = new Array(graph.nodes.length).fill(-1);
             } else {
@@ -678,13 +721,17 @@ public class DFS {
                 if (currentView === 'bars' && p.height > 0) {
                     values = values.map(v => p.map(v, 1, 100, 15, p.height - 20));
                 }
-                states = new Array(values.length).fill(-1);
                 if (currentCategory === 'searching') {
                     values.sort((a, b) => a - b);
                     const targetValue = values[p.floor(p.random(values.length))];
                     searchInput.value = Math.floor(targetValue);
                 }
             }
+
+            if (currentCategory !== 'graph') {
+                states = new Array(values.length).fill(-1);
+            }
+
             sorter = getSorter();
             p.redraw();
         };
