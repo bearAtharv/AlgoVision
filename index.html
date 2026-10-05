@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Algorithm Platform</title>
+    <title>Interactive Algorithm Platform v2.0</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,42 +22,51 @@
     <div class="main-container">
         <div id="sidebar">
             <div class="sidebar-content">
-                <h2> AlgoVision</h2>
-                <!-- <h2>Algorithms</h2> -->
+                <h2>AlgoVision v2.0</h2>
                 <ul id="algorithm-list"></ul>
+                <button id="custom-algo-btn">Custom Algorithm</button>
+                <button id="learn-btn">Learn</button>
             </div>
             <div id="attribution">
                 <i class="fas fa-code"></i>
                 <span>Made by saran & atharv</span>
-                </br>
+                <br>
                 <span>Team: Crooked Algo</span>
             </div>
         </div>
         <div class="main-content">
-            <div id="algorithm-display-section">
-                <div id="language-selector">
-                    <button class="lang-btn active" data-lang="javascript">JavaScript</button>
-                    <button class="lang-btn" data-lang="python">Python</button>
-                    <button class="lang-btn" data-lang="cpp">C++</button>
-                    <button class="lang-btn" data-lang="java">Java</button>
-                </div>
-                <div id="code-container">
-                    <div class="code-header">Code</div>
-                    <pre><code id="code-block" class="language-javascript"></code></pre>
-                </div>
-                <div class="visualization-wrapper">
+            <div id="language-selector">
+                <button class="lang-btn active" data-lang="javascript">JavaScript</button>
+                <button class="lang-btn" data-lang="python">Python</button>
+                <button class="lang-btn" data-lang="cpp">C++</button>
+                <button class="lang-btn" data-lang="java">Java</button>
+            </div>
+            <div id="code-container">
+                <div class="code-header">Code</div>
+                <pre><code id="code-block" class="language-javascript"></code></pre>
+            </div>
+            <div id="custom-code-container" style="display: none;">
+                <div class="code-header">Custom JavaScript Code</div>
+                <textarea id="custom-code-editor" placeholder="Enter your generator function here..."></textarea>
+                <button id="visualize-custom-code-btn">Visualize</button>
+                <button id="guide-btn">How to Write Algorithms</button>
+            </div>
+            <div class="visualization-wrapper">
                 <div id="vis-header">
                     <div id="search-input-container">
                         <label for="search-input">Search for:</label>
                         <input type="number" id="search-input" placeholder="Value">
                     </div>
-                    <button id="steps-btn" class="view-btn"><i class="fas fa-list-ol"></i> Steps</button>
                 </div>
                 <div id="visualization-container"></div>
             </div>
             <div id="complexity-info">
                 <div class="complexity-item">Time Complexity: <span id="time-complexity"></span></div>
                 <div class="complexity-item">Space Complexity: <span id="space-complexity"></span></div>
+            </div>
+            <div id="explanation-container" style="display: none;">
+                <div class="code-header">Explanation</div>
+                <div id="explanation"></div>
             </div>
             <div id="controls">
                 <div class="playback-controls">
@@ -73,28 +84,63 @@
                 </div>
             </div>
         </div>
-        <div id="custom-array-container" class="hidden">
-            <input type="text" id="custom-array-input" placeholder="Enter space-separated numbers...">
-            <button id="custom-array-btn">Use Custom Array</button>
-        </div>
-        <div id="code-explanation-section" style="display: none;">
-            <div class="explain-header">
-                <h3>🧩 Explain Custom Code</h3>
-            </div>
-            <div id="explain-content-custom">
-                <textarea id="custom-code-input" placeholder="Paste your algorithm code here..."></textarea>
-                <button id="explain-btn">Explain</button>
-                <div id="explanation-output"></div>
-            </div>
+    </div>
+
+    <div id="guide-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>How to Write Custom Algorithms</h2>
+            <p>This guide will walk you through the process of writing a custom algorithm for this platform.</p>
+            <h3>Generator Functions</h3>
+            <p>The most important thing to understand is that your algorithm must be a generator function. A generator function is a special type of function that can be paused and resumed, allowing us to visualize the state of the algorithm at each step.</p>
+            <p>A generator function is defined using the `function*` syntax. Inside the function, you can use the `yield` keyword to pause the execution of the function and return a value. When the function is resumed, it will continue from where it left off.</p>
+            <h3>Example: Palindrome Checker</h3>
+            <p>Here is an example of a palindrome checker written as a generator function:</p>
+            <pre><code class="language-javascript">function* isPalindrome(str) {
+  const len = str.length;
+  for (let i = 0; i < len / 2; i++) {
+    // Highlight the characters being compared
+    states[i] = 0;
+    states[len - 1 - i] = 0;
+    yield;
+
+    if (str[i] !== str[len - 1 - i]) {
+      // Not a palindrome, highlight the mismatched characters in red
+      states[i] = 1;
+      states[len - 1 - i] = 1;
+      yield;
+      return false;
+    }
+
+    // Characters match, highlight them in green
+    states[i] = 2;
+    states[len - 1 - i] = 2;
+    yield;
+  }
+
+  return true;
+}</code></pre>
+            <h3>States</h3>
+            <p>The `states` array is used to keep track of the state of each element in the array or string being visualized. The following states are available:</p>
+            <ul>
+                <li>`0`: Comparing (blue)</li>
+                <li>`1`: Swapping/Mismatch (red)</li>
+                <li>`2`: Sorted/Match (green)</li>
+                <li>`3`: Pivot/Special (purple)</li>
+            </ul>
+            <p>By updating the `states` array and using the `yield` keyword, you can create a step-by-step visualization of your algorithm.</p>
         </div>
     </div>
 
-    <!-- Steps Modal -->
-    <div id="steps-modal" class="modal">
+    <div id="learn-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2 id="modal-title">Description</h2>
-            <div id="modal-body"></div>
+            <span class="close-btn">&times;</span>
+            <h2 id="learn-title"></h2>
+            <p id="learn-explanation"></p>
+            <h3>How it Works</h3>
+            <p id="learn-how-it-works"></p>
+            <h3>How to Write the Code</h3>
+            <pre><code id="learn-code" class="language-javascript"></code></pre>
         </div>
     </div>
 
@@ -105,7 +151,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
