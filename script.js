@@ -10,11 +10,44 @@ window.addEventListener('load', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    const algorithmList = document.getElementById('algorithm-list');
+    const searchInputContainer = document.getElementById('search-input-container');
+    const searchInput = document.getElementById('search-input');
+    const timeComplexityEl = document.getElementById('time-complexity');
+    const spaceComplexityEl = document.getElementById('space-complexity');
+    const codeBlock = document.getElementById('code-block');
+    const langButtons = document.querySelectorAll('.lang-btn');
+    const viewButtons = document.querySelectorAll('.view-btn');
+    const playBtn = document.getElementById('play-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const speedSlider = document.getElementById('speed-slider');
+    const customAlgoBtn = document.getElementById('custom-algo-btn');
+    const learnBtn = document.getElementById('learn-btn');
+    const languageSelector = document.getElementById('language-selector');
+    const complexityInfo = document.getElementById('complexity-info');
+    const codeContainer = document.getElementById('code-container');
+    const customCodeContainer = document.getElementById('custom-code-container');
+    const customCodeEditor = CodeMirror.fromTextArea(document.getElementById('custom-code-editor'), {
+        lineNumbers: true,
+        theme: 'dracula',
+        mode: 'javascript'
+    });
+    const explanationContainer = document.getElementById('explanation-container');
+    const explanation = document.getElementById('explanation');
+    const visualizeCustomCodeBtn = document.getElementById('visualize-custom-code-btn');
+
+    let currentAlgorithm = 'Bubble Sort';
+    let currentCategory = 'sorting';
+    let currentLang = 'javascript';
+    let currentView = 'bars';
+    let animationSpeed = 45;
+    let sketch;
+    let worker;
+
     const algorithms = {
         sorting: {
             'Bubble Sort': {
-                description: `Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order. The pass through the list is repeated until the list is sorted. The algorithm, which is a comparison sort, is named for the way smaller or larger elements "bubble" to the top of the list. Although the algorithm is simple, it is too slow and impractical for most problems even when compared to insertion sort.`,
-                pseudocode: `1. Start at the beginning of the list.\n2. Compare the first two elements. If the first is greater than the second, swap them.\n3. Move to the next pair of elements, compare them, and swap if necessary.\n4. Continue this process until the end of the list. The largest element will now be at the end.\n5. Repeat the process for the entire list, excluding the last element (which is already in place).\n6. Continue repeating, reducing the list size by one each time, until the entire list is sorted.`,
                 complexity: { time: 'O(n²)', space: 'O(1)' },
                 code: {
                     javascript: `function bubbleSort(arr) {\n  for (let i = 0; i < arr.length; i++) {\n    for (let j = 0; j < arr.length - i - 1; j++) {\n      if (arr[j] > arr[j + 1]) {\n        let temp = arr[j];\n        arr[j] = arr[j+1];\n        arr[j+1] = temp;\n      }\n    }\n  }\n  return arr;\n}`,
@@ -24,8 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             'Selection Sort': {
-                description: `Selection sort is an in-place comparison sorting algorithm. It has an O(n²) time complexity, which makes it inefficient on large lists, and generally performs worse than the similar insertion sort. Selection sort is noted for its simplicity and has performance advantages over more complicated algorithms in certain situations, particularly where auxiliary memory is limited.`,
-                pseudocode: `1. Assume the first element is the smallest. This is your minimum.\n2. Iterate through the rest of the list and compare each element to the minimum.\n3. If you find an element smaller than the current minimum, set it as the new minimum.\n4. After checking all elements, if the minimum is not the element you started with, swap them.\n5. Move to the next element in the list and repeat the process, considering the unsorted part of the list.\n6. Continue until the entire list is sorted.`,
                 complexity: { time: 'O(n²)', space: 'O(1)' },
                 code: {
                     javascript: `function selectionSort(arr) {\n  for (let i = 0; i < arr.length; i++) {\n    let min = i;\n    for (let j = i + 1; j < arr.length; j++) {\n      if (arr[j] < arr[min]) min = j;\n    }\n    if (min !== i) [arr[i], arr[min]] = [arr[min], arr[i]];\n  }\n  return arr;\n}`,
@@ -35,8 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             'Insertion Sort': {
-                description: `Insertion sort is a simple sorting algorithm that builds the final sorted array one item at a time. It is much less efficient on large lists than more advanced algorithms such as quicksort, heapsort, or merge sort. However, insertion sort provides several advantages: simple implementation, efficient for (quite) small data sets, and more efficient in practice than most other simple quadratic (i.e., O(n²)) algorithms such as selection sort or bubble sort.`,
-                pseudocode: `1. Start with the second element in the list. This is the key.\n2. Compare the key with the element before it (the first element).\n3. If the key is smaller, shift the previous element one position up.\n4. Continue this process, comparing the key with elements in the sorted portion of the list and shifting them up until you find the correct position for the key.\n5. Insert the key into its correct position.\n6. Move to the next element in the unsorted portion of the list and repeat until the entire list is sorted.`,
                 complexity: { time: 'O(n²)', space: 'O(1)' },
                 code: {
                     javascript: `function insertionSort(arr) {\n  for (let i = 1; i < arr.length; i++) {\n    let current = arr[i];\n    let j = i - 1;\n    while ((j > -1) && (current < arr[j])) {\n      arr[j + 1] = arr[j];\n      j--;\n    }\n    arr[j + 1] = current;\n  }\n  return arr;\n}`,
@@ -46,8 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             'Shell Sort': {
-                description: `Shell sort is a generalization of insertion sort that allows the exchange of items that are far apart. The idea is to arrange the list of elements so that, starting anywhere, considering every nth element gives a sorted list. Such a list is said to be h-sorted. The method is also known as Shell's method, after its inventor, Donald Shell.`,
-                pseudocode: `1. Start with a large gap (interval) between elements. A common starting gap is half the list size.\n2. Perform an insertion sort on elements that are separated by this gap. For example, if the gap is 5, you would sort elements at indices 0, 5, 10, etc., then 1, 6, 11, etc.\n3. Reduce the gap (e.g., divide by 2) and repeat the gapped insertion sort.\n4. Continue reducing the gap until it is 1.\n5. Finally, perform a standard insertion sort (gap of 1) on the nearly sorted list. This final pass is very efficient.`,
                 complexity: { time: 'O(n log² n)', space: 'O(1)' },
                 code: {
                     javascript: `function shellSort(arr) {\n  let n = arr.length;\n  for (let gap = Math.floor(n/2); gap > 0; gap = Math.floor(gap/2)) {\n    for (let i = gap; i < n; i += 1) {\n      let temp = arr[i];\n      let j;\n      for (j = i; j >= gap && arr[j-gap] > temp; j-=gap) {\n        arr[j] = arr[j-gap];\n      }\n      arr[j] = temp;\n    }\n  }\n  return arr;\n}`,
@@ -56,9 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     java: `class ShellSort {\n    int sort(int arr[]) {\n        int n = arr.length;\n        for (int gap = n/2; gap > 0; gap /= 2) {\n            for (int i = gap; i < n; i += 1) {\n                int temp = arr[i];\n                int j;\n                for (j = i; j >= gap && arr[j - gap] > temp; j -= gap)\n                    arr[j] = arr[j - gap];\n                arr[j] = temp;\n            }\n        }\n        return 0;\n    }\n}`
                 }
             },
-'Merge Sort': {
-                description: `Merge sort is an efficient, general-purpose, comparison-based sorting algorithm. Most implementations produce a stable sort, which means that the order of equal elements is the same in the input and output. Merge sort is a divide and conquer algorithm that was invented by John von Neumann in 1945.`,
-                pseudocode: `1. Check if the list has more than one element. If not, it is already sorted.\n2. If the list has more than one element, divide it into two halves.\n3. Recursively call Merge Sort on each half. This will continue until each sublist has only one element.\n4. Once the sublists are sorted, merge them back together. To merge, compare the first elements of each sublist and add the smaller one to the new merged list.\n5. Repeat the comparison until one of the sublists is empty.\n6. Add the remaining elements from the non-empty sublist to the merged list. The result is a single, sorted list.`,
+            'Merge Sort': {
                 complexity: { time: 'O(n log n)', space: 'O(n)' },
                 code: {
                     javascript: `function mergeSort(arr) {\n  if (arr.length <= 1) return arr;\n  const mid = Math.floor(arr.length / 2);\n  const left = mergeSort(arr.slice(0, mid));\n  const right = mergeSort(arr.slice(mid));\n\n  let i = 0, j = 0, k = 0;\n  const result = [];\n  while (i < left.length && j < right.length) {\n    if (left[i] < right[j]) {\n      result[k++] = left[i++];\n    } else {\n      result[k++] = right[j++];\n    }\n  }\n  while (i < left.length) result[k++] = left[i++];\n  while (j < right.length) result[k++] = right[j++];\n  return result;\n}`,
@@ -68,8 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             'Quick Sort': {
-                description: `Quicksort is an efficient sorting algorithm. Developed by British computer scientist Tony Hoare in 1959 and published in 1961, it is still a commonly used algorithm for sorting. When implemented well, it can be about two or three times faster than its main competitors, merge sort and heapsort.`,
-                pseudocode: `1. Choose an element from the list to be the pivot. This can be any element, but often the last or a random one is chosen.\n2. Reorder the list so that all elements with values less than the pivot come before it, and all elements with values greater than the pivot come after it (equal values can go either way). This is called partitioning.\n3. After partitioning, the pivot is in its final sorted position.\n4. Recursively apply the above steps to the sub-list of elements with smaller values and separately to the sub-list of elements with greater values.\n5. The base case for the recursion is a list of zero or one element, which is already sorted.`,
                 complexity: { time: 'O(n log n)', space: 'O(log n)' },
                 code: {
                     javascript: `function quickSort(arr, low, high) {\n  if (low < high) {\n    let pi = partition(arr, low, high);\n    quickSort(arr, low, pi - 1);\n    quickSort(arr, pi + 1, high);\n  }\n  return arr;\n}\n\nfunction partition(arr, low, high) {\n  let pivot = arr[high];\n  let i = low - 1;\n  for (let j = low; j < high; j++) {\n    if (arr[j] < pivot) {\n      i++;\n      [arr[i], arr[j]] = [arr[j], arr[i]];\n    }\n  }\n  [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];\n  return i + 1;\n}`,
@@ -81,19 +104,15 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         searching: {
             'Linear Search': {
-                description: `Linear search or sequential search is a method for finding an element within a list. It sequentially checks each element of the list until a match is found or the whole list has been searched. A linear search runs in at worst linear time and makes at most n comparisons, where n is the length of the list.`,
-                pseudocode: `1. Start from the first element in the list.\n2. Compare the current element with the target value you are searching for.\n3. If they are the same, the search is successful. Return the position of the element.\n4. If they are not the same, move to the next element in the list.\n5. Repeat steps 2-4 until you either find the target value or reach the end of the list.\n6. If you reach the end of the list without finding the value, the search is unsuccessful.`,
                 complexity: { time: 'O(n)', space: 'O(1)' },
                 code: {
-                    javascript: `function linearSearch(arr, key) {\n  for(let i = 0; i < arr.length; i++){`,
+                    javascript: `function linearSearch(arr, key) {\n  for(let i = 0; i < arr.length; i++){\n    if(arr[i] === key) return i;\n  }\n  return -1;\n}`,
                     python: `def linear_search(arr, x):\n    for i in range(len(arr)):\n        if arr[i] == x:\n            return i\n    return -1`,
                     cpp: `int linearSearch(int arr[], int n, int x) {\n    for (int i = 0; i < n; i++)\n        if (arr[i] == x)\n            return i;\n    return -1;\n}`,
                     java: `class LinearSearch {\n    public static int linearSearch(int arr[], int x) {\n        int n = arr.length;\n        for(int i = 0; i < n; i++) {\n            if(arr[i] == x)\n                return i;\n        }\n        return -1;\n    }\n}`
                 }
             },
             'Binary Search': {
-                description: `Binary search, also known as half-interval search, logarithmic search, or binary chop, is a search algorithm that finds the position of a target value within a sorted array. Binary search compares the target value to the middle element of the array. If they are not equal, the half in which the target cannot lie is eliminated and the search continues on the remaining half, again taking the middle element to compare to the target value, and repeating this until the target value is found.`,
-                pseudocode: `1. Ensure the list is sorted.\n2. Compare the target value to the middle element of the list.\n3. If the target value is equal to the middle element, the search is successful. Return its position.\n4. If the target value is less than the middle element, repeat the search on the lower half of the list.\n5. If the target value is greater than the middle element, repeat the search on the upper half of the list.\n6. Continue this process, halving the search space each time, until the value is found or the search space is empty.`,
                 complexity: { time: 'O(log n)', space: 'O(1)' },
                 code: {
                     javascript: `function binarySearch(arr, key) {\n  let start = 0, end = arr.length - 1;\n  while (start <= end) {\n    let mid = Math.floor((start + end) / 2);\n    if (arr[mid] === key) return mid;\n    else if (arr[mid] < key) start = mid + 1;\n    else end = mid - 1;\n  }\n  return -1;\n}`,
@@ -103,347 +122,79 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
         },
+        string: {
+            'Palindrome': {
+                complexity: { time: 'O(n)', space: 'O(1)' },
+                code: {
+                    javascript: `function isPalindrome(str) {\n  const len = str.length;\n  for (let i = 0; i < len / 2; i++) {\n    if (str[i] !== str[len - 1 - i]) {\n      return false;\n    }\n  }\n  return true;\n}`,
+                    python: `def is_palindrome(s):\n    return s == s[::-1]`,
+                    cpp: `bool isPalindrome(string S) {\n    string P = S;\n    reverse(P.begin(), P.end());\n    if (S == P) {\n        return true;\n    }\n    else {\n        return false;\n    }\n}`,
+                    java: `class Palindrome {\n    boolean isPalindrome(String str) {\n        int i = 0, j = str.length() - 1;\n        while (i < j) {\n            if (str.charAt(i) != str.charAt(j))\n                return false;\n            i++;\n            j--;\n        }\n        return true;\n    }\n}`
+                }
+            }
+        },
         graph: {
             'Dijkstra': {
-                description: 'Dijkstra\'s algorithm is an algorithm for finding the shortest paths between nodes in a graph, which may represent, for example, road networks. It was conceived by computer scientist Edsger W. Dijkstra in 1956 and published three years later.',
-                pseudocode: `1. Set the distance to the starting node as 0 and all other nodes as infinity.\n2. Maintain a set of unvisited nodes, initially containing all nodes.\n3. While the unvisited set is not empty, select the node with the smallest known distance. This is the current node.\n4. For the current node, consider all of its unvisited neighbors.\n5. For each neighbor, calculate the distance from the start node through the current node.\n6. If this calculated distance is less than the known distance for that neighbor, update the neighbor\'s distance.\n7. Once all neighbors have been considered, mark the current node as visited and remove it from the unvisited set.\n8. Repeat until all nodes have been visited. The shortest path from the start node to all other nodes is now known.`,
                 complexity: { time: 'O(E log V)', space: 'O(V)' },
                 code: {
                     javascript: `function dijkstra(graph, startNode) {\n  let distances = {};\n  let prev = {};\n  let pq = new PriorityQueue();\n\n  distances[startNode] = 0;\n  pq.enqueue(startNode, 0);\n\n  for (let vertex in graph) {\n    if (vertex !== startNode) {\n      distances[vertex] = Infinity;\n    }\n    prev[vertex] = null;\n  }\n\n  while (!pq.isEmpty()) {\n    let minNode = pq.dequeue().element;\n\n    for (let neighbor in graph[minNode]) {\n      let newDist = distances[minNode] + graph[minNode][neighbor];\n\n      if (newDist < distances[neighbor]) {\n        distances[neighbor] = newDist;\n        prev[neighbor] = minNode;\n        pq.enqueue(neighbor, newDist);\n      }\n    }\n  }\n\n  return { distances, prev };\n}`,
-                    python: `import heapq
-
-def dijkstra(graph, start_node):
-    distances = {node: float('infinity') for node in graph}
-    distances[start_node] = 0
-    priority_queue = [(0, start_node)]
-
-    while priority_queue:
-        current_distance, current_node = heapq.heappop(priority_queue)
-
-        if current_distance > distances[current_node]:
-            continue
-
-        for neighbor, weight in graph[current_node].items():
-            distance = current_distance + weight
-
-            if distance < distances[neighbor]:
-                distances[neighbor] = distance
-                heapq.heappush(priority_queue, (distance, neighbor))
-
-    return distances`,
-                    cpp: `#include <iostream>
-#include <vector>
-#include <queue>
-#include <limits>
-
-const int INF = std::numeric_limits<int>::max();
-
-struct Edge {
-    int to;
-    int weight;
-    Edge(int t, int w) : to(t), weight(w) {}
-};
-
-std::vector<int> dijkstra(const std::vector<std::vector<Edge>>& graph, int V, int start_node) {
-    std::vector<int> dist(V, INF);
-    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
-
-    dist[start_node] = 0;
-    pq.push({0, start_node});
-
-    while (!pq.empty()) {
-        int d = pq.top().first;
-        int u = pq.top().second;
-        pq.pop();
-
-        if (d > dist[u]) {
-            continue;
-        }
-
-        for (const Edge& edge : graph[u]) {
-            int v = edge.to;
-            int weight = edge.weight;
-
-            if (dist[u] + weight < dist[v]) {
-                dist[v] = dist[u] + weight;
-                pq.push({dist[v], v});
-            }
-        }
-    }
-
-    return dist;
-}`,
-                    java: `import java.util.*;
-
-class Edge {
-    Node target;
-    int weight;
-
-    public Edge(Node target, int weight) {
-        this.target = target;
-        this.weight = weight;
-    }
-}
-
-class Node implements Comparable<Node> {
-    String name;
-    List<Edge> adjacencies;
-    int distance;
-    Node previous;
-
-    public Node(String name) {
-        this.name = name;
-        this.adjacencies = new ArrayList<>();
-        this.distance = Integer.MAX_VALUE;
-        this.previous = null;
-    }
-
-    public void addEdge(Node target, int weight) {
-        adjacencies.add(new Edge(target, weight));
-    }
-
-    @Override
-    public int compareTo(Node other) {
-        return Integer.compare(this.distance, other.distance);
-    }
-}
-
-public class Dijkstra {
-
-    public static void computeShortestPaths(Node source) {
-        source.distance = 0;
-        PriorityQueue<Node> priorityQueue = new PriorityQueue<>();
-        priorityQueue.add(source);
-
-        while (!priorityQueue.isEmpty()) {
-            Node u = priorityQueue.poll();
-
-            for (Edge edge : u.adjacencies) {
-                Node v = edge.target;
-                int weight = edge.weight;
-
-                if (u.distance + weight < v.distance) {
-                    priorityQueue.remove(v);
-                    v.distance = u.distance + weight;
-                    v.previous = u;
-                    priorityQueue.add(v);
-                }
-            }
-        }
-    }
-}`
+                    python: `# Python code for Dijkstra's algorithm will go here`,
+                    cpp: `// C++ code for Dijkstra's algorithm will go here`,
+                    java: `// Java code for Dijkstra's algorithm will go here`
                 }
             },
             'BFS': {
-                description: 'Breadth-First Search (BFS) is an algorithm for traversing or searching tree or graph data structures. It starts at the tree root (or some arbitrary node of a graph, sometimes referred to as a \'search key\'), and explores all of the neighbor nodes at the present depth prior to moving on to the nodes at the next depth level.',
-                pseudocode: `1. Start with a queue and add the starting node to it.\n2. Mark the starting node as visited.\n3. While the queue is not empty, do the following:\n  a. Dequeue a node. This is the current node.\n  b. For each neighbor of the current node that has not been visited:\n    i. Mark the neighbor as visited.\n    ii. Enqueue the neighbor.\n4. The search is complete when the queue is empty. All reachable nodes have been visited.`,
                 complexity: { time: 'O(V + E)', space: 'O(V)' },
                 code: {
                     javascript: `function bfs(graph, startNode) {\n  let visited = {};\n  let queue = [];\n\n  visited[startNode] = true;\n  queue.push(startNode);\n\n  while (queue.length > 0) {\n    let currentNode = queue.shift();\n\n    for (let neighbor of graph[currentNode]) {\n      if (!visited[neighbor]) {\n        visited[neighbor] = true;\n        queue.push(neighbor);\n      }\n    }\n  }\n}`,
-                    python: `from collections import deque
-
-def bfs(graph, start_node):
-    visited = set()
-    queue = deque([start_node])
-    visited_order = []
-
-    visited.add(start_node)
-
-    while queue:
-        current_node = queue.popleft()
-        visited_order.append(current_node)
-
-        for neighbor in graph.get(current_node, []):
-            if neighbor not in visited:
-                visited.add(neighbor)
-                queue.append(neighbor)
-    return visited_order`,
-                    cpp: `#include <iostream>
-#include <vector>
-#include <queue>
-
-std::vector<int> bfs(int num_nodes, const std::vector<std::vector<int>>& adj, int start_node) {
-    std::vector<bool> visited(num_nodes, false);
-    std::queue<int> q;
-    std::vector<int> visited_order;
-
-    visited[start_node] = true;
-    q.push(start_node);
-
-    while (!q.empty()) {
-        int current_node = q.front();
-        q.pop();
-        visited_order.push_back(current_node);
-
-        for (int neighbor : adj[current_node]) {
-            if (!visited[neighbor]) {
-                visited[neighbor] = true;
-                q.push(neighbor);
-            }
-        }
-    }
-    return visited_order;
-}`,
-                    java: `import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.List;
-
-public class BFS {
-
-    public static List<Integer> bfs(int numNodes, ArrayList<ArrayList<Integer>> adj, int startNode) {
-        boolean[] visited = new boolean[numNodes];
-        Queue<Integer> queue = new LinkedList<>();
-        List<Integer> visitedOrder = new ArrayList<>();
-
-        visited[startNode] = true;
-        queue.add(startNode);
-
-        while (!queue.isEmpty()) {
-            int currentNode = queue.poll();
-            visitedOrder.add(currentNode);
-
-            for (int neighbor : adj.get(currentNode)) {
-                if (!visited[neighbor]) {
-                    visited[neighbor] = true;
-                    queue.add(neighbor);
-                }
-            }
-        }
-        return visitedOrder;
-    }
-}`
+                    python: `# Python code for BFS algorithm will go here`,
+                    cpp: `// C++ code for BFS algorithm will go here`,
+                    java: `// Java code for BFS algorithm will go here`
                 }
             },
             'DFS': {
-                description: 'Depth-first search (DFS) is an algorithm for traversing or searching tree or graph data structures. The algorithm starts at the root node (selecting some arbitrary node as the root node in the case of a graph) and explores as far as possible along each branch before backtracking.',
-                pseudocode: `1. Start with a stack and add the starting node to it.\n2. While the stack is not empty, do the following:\n  a. Pop a node from the stack. This is the current node.\n  b. If the current node has not been visited:\n    i. Mark it as visited.\n    ii. For each neighbor of the current node, push the neighbor onto the stack.\n3. The search is complete when the stack is empty. All reachable nodes have been visited.`,
                 complexity: { time: 'O(V + E)', space: 'O(V)' },
                 code: {
                     javascript: `function dfs(graph, startNode) {\n  let visited = {};\n\n  function traverse(vertex) {\n    if (!vertex) return;\n\n    visited[vertex] = true;\n\n    for (let neighbor of graph[vertex]) {\n      if (!visited[neighbor]) {\n        traverse(neighbor);\n      }\n    }\n  }\n\n  traverse(startNode);\n}`,
-                    python: `def dfs(graph, start_node, visited=None):
-    if visited is None:
-        visited = set()
-    visited.add(start_node)
-    # Process node here
-
-    for neighbor in graph.get(start_node, []):
-        if neighbor not in visited:
-            dfs(graph, neighbor, visited)`,
-                    cpp: `#include <iostream>
-#include <vector>
-
-void dfs(int node, const std::vector<std::vector<int>>& graph, std::vector<bool>& visited) {
-    visited[node] = true;
-    // Process node here
-
-    for (int neighbor : graph[node]) {
-        if (!visited[neighbor]) {
-            dfs(neighbor, graph, visited);
-        }
-    }
-}`,
-                    java: `import java.util.ArrayList;
-import java.util.List;
-
-public class DFS {
-
-    public void dfs(int node, List<List<Integer>> graph, boolean[] visited) {
-        visited[node] = true;
-        // Process node here
-
-        for (int neighbor : graph.get(node)) {
-            if (!visited[neighbor]) {
-                dfs(neighbor, graph, visited);
-            }
-        }
-    }
-}`
+                    python: `# Python code for DFS algorithm will go here`,
+                    cpp: `// C++ code for DFS algorithm will go here`,
+                    java: `// Java code for DFS algorithm will go here`
                 }
             }
         }
     };
 
-    const algorithmList = document.getElementById('algorithm-list');
-    const algorithmDisplaySection = document.getElementById('algorithm-display-section');
-    const codeExplanationSection = document.getElementById('code-explanation-section');
-
-    const searchInputContainer = document.getElementById('search-input-container');
-    const searchInput = document.getElementById('search-input');
-    const timeComplexityEl = document.getElementById('time-complexity');
-    const spaceComplexityEl = document.getElementById('space-complexity');
-    const codeBlock = document.getElementById('code-block');
-    const langButtons = document.querySelectorAll('.lang-btn');
-    const viewButtons = document.querySelectorAll('.view-btn[data-view]');
-    const stepsBtn = document.getElementById('steps-btn');
-    const playBtn = document.getElementById('play-btn');
-    const pauseBtn = document.getElementById('pause-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const speedSlider = document.getElementById('speed-slider');
-    const customCodeInput = document.getElementById('custom-code-input');
-    const explainBtn = document.getElementById('explain-btn');
-    const explanationOutput = document.getElementById('explanation-output');
-    const customArrayContainer = document.getElementById('custom-array-container');
-    const customArrayInput = document.getElementById('custom-array-input');
-    const customArrayBtn = document.getElementById('custom-array-btn');
-
-    const modal = document.getElementById('steps-modal');
-    const closeButton = modal.querySelector('.close-button');
-
-    closeButton.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
-    window.addEventListener('click', (event) => {
-        if (event.target == modal) {
-            modal.style.display = 'none';
+    const learnContent = {
+        'Palindrome': {
+            explanation: 'A palindrome is a word, phrase, number, or other sequence of characters that reads the same backward as forward, such as "madam" or "racecar".',
+            howItWorks: 'The most common way to check for a palindrome is to compare the characters from the start and the end of the string, moving inwards. If all characters match, it\'s a palindrome.',
+            code: `function isPalindrome(str) {\n  const len = str.length;\n  for (let i = 0; i < len / 2; i++) {\n    if (str[i] !== str[len - 1 - i]) {\n      return false;\n    }\n  }\n  return true;\n}`
         }
-    });
+        // Add more explanations here
+    };
 
-    let currentAlgorithm = 'Bubble Sort';
-    let currentCategory = 'sorting';
-    let currentLang = 'javascript';
-    let currentView = 'bars';
-    let animationSpeed = 45;
-    let sketch;
-
-    function getAlgoData(category, name) { 
-        if (category === 'explanation') return null; // No specific data for explanation section
-        return algorithms[category][name]; 
-    }
+    function getAlgoData(category, name) { return algorithms[category] ? algorithms[category][name] : undefined; }
 
     function updateUIForAlgorithm() {
-        if (currentCategory === 'explanation') {
-            algorithmDisplaySection.style.display = 'none';
-            codeExplanationSection.style.display = 'flex';
-            document.querySelector('.main-content').classList.remove('graph-view-active');
-        } else {
-            algorithmDisplaySection.style.display = 'flex';
-            codeExplanationSection.style.display = 'none';
+        languageSelector.style.display = 'flex';
+        complexityInfo.style.display = 'flex';
+        explanationContainer.style.display = 'none';
+        codeContainer.style.display = 'flex';
+        customCodeContainer.style.display = 'none';
+        guideBtn.style.display = 'none';
+        viewButtons.forEach(btn => btn.style.display = currentCategory === 'graph' ? 'none' : 'inline-block');
 
-            if (currentCategory === 'graph') {
-                document.querySelector('.main-content').classList.add('graph-view-active');
-                customArrayContainer.classList.add('hidden');
-            } else {
-                document.querySelector('.main-content').classList.remove('graph-view-active');
-                if (currentView === 'array') {
-                    customArrayContainer.classList.remove('hidden');
-                }
-            }
 
-            const algoData = getAlgoData(currentCategory, currentAlgorithm);
+        const algoData = getAlgoData(currentCategory, currentAlgorithm);
+        if (algoData) {
             timeComplexityEl.textContent = algoData.complexity.time;
             spaceComplexityEl.textContent = algoData.complexity.space;
-            searchInputContainer.style.display = currentCategory === 'searching' ? 'flex' : 'none';
-            viewButtons.forEach(btn => btn.style.display = currentCategory === 'graph' ? 'none' : 'inline-block');
-            updateCodeView();
-            if (sketch) {
-                sketch.reset();
-                // Call resize after a short delay to allow the DOM to update
-                setTimeout(() => sketch.resize(), 50);
-            }
         }
+        searchInputContainer.style.display = currentCategory === 'searching' || currentCategory === 'string' ? 'none' : 'flex';
+        updateCodeView();
+        if (sketch) sketch.reset();
     }
+
 
     function updateCodeView() {
         const algo = getAlgoData(currentCategory, currentAlgorithm);
@@ -461,27 +212,9 @@ public class DFS {
             algorithmList.appendChild(header);
             Object.keys(algorithms[category]).forEach(name => {
                 const li = document.createElement('li');
+                li.textContent = name;
                 li.dataset.alg = name;
                 li.dataset.cat = category;
-
-                const algoName = document.createElement('span');
-                algoName.textContent = name;
-                li.appendChild(algoName);
-
-                const infoIcon = document.createElement('i');
-                infoIcon.className = 'fas fa-info-circle algo-info-icon';
-                infoIcon.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent li click event
-                    const algoData = getAlgoData(category, name);
-                    const modal = document.getElementById('steps-modal');
-                    const title = modal.querySelector('#modal-title');
-                    const body = modal.querySelector('#modal-body');
-                    title.textContent = `${name} - Description`;
-                    body.innerHTML = marked.parse(algoData.description);
-                    modal.style.display = 'block';
-                });
-                li.appendChild(infoIcon);
-
                 li.addEventListener('click', () => {
                     currentAlgorithm = name;
                     currentCategory = category;
@@ -492,32 +225,14 @@ public class DFS {
                 algorithmList.appendChild(li);
             });
         });
-        // Add Code Explanation section
-        const explanationHeader = document.createElement('li');
-        explanationHeader.className = 'algo-subheader';
-        explanationHeader.textContent = 'Code Explanation';
-        algorithmList.appendChild(explanationHeader);
-
-        const customCodeLi = document.createElement('li');
-        customCodeLi.textContent = 'Explain Custom Code';
-        customCodeLi.dataset.alg = 'Custom Code';
-        customCodeLi.dataset.cat = 'explanation';
-        customCodeLi.addEventListener('click', () => {
-            currentAlgorithm = 'Custom Code';
-            currentCategory = 'explanation';
-            document.querySelectorAll('#algorithm-list li.active').forEach(item => item.classList.remove('active'));
-            customCodeLi.classList.add('active');
-            updateUIForAlgorithm();
-        });
-        algorithmList.appendChild(customCodeLi);
-
-        // Set initial active algorithm
         const firstAlgo = algorithmList.querySelector('li[data-alg]');
         firstAlgo.classList.add('active');
         currentAlgorithm = firstAlgo.dataset.alg;
         currentCategory = firstAlgo.dataset.cat;
         updateUIForAlgorithm();
     }
+
+
 
     langButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -528,46 +243,68 @@ public class DFS {
         });
     });
 
+    const guideBtn = document.getElementById('guide-btn');
+    const guideModal = document.getElementById('guide-modal');
+    const learnModal = document.getElementById('learn-modal');
+    const closeBtns = document.querySelectorAll('.close-btn');
+
+    guideBtn.addEventListener('click', () => {
+        guideModal.style.display = 'block';
+    });
+
+    learnBtn.addEventListener('click', () => {
+        const content = learnContent[currentAlgorithm];
+        if (content) {
+            document.getElementById('learn-title').textContent = currentAlgorithm;
+            document.getElementById('learn-explanation').textContent = content.explanation;
+            document.getElementById('learn-how-it-works').textContent = content.howItWorks;
+            document.getElementById('learn-code').textContent = content.code;
+            Prism.highlightAll();
+            learnModal.style.display = 'block';
+        } else {
+            alert('Learning content for this algorithm is not available yet.');
+        }
+    });
+
+    closeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            guideModal.style.display = 'none';
+            learnModal.style.display = 'none';
+        });
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target == guideModal) {
+            guideModal.style.display = 'none';
+        }
+        if (event.target == learnModal) {
+            learnModal.style.display = 'none';
+        }
+    });
+
+    customAlgoBtn.addEventListener('click', () => {
+        currentAlgorithm = 'Custom';
+        document.querySelectorAll('#algorithm-list li.active').forEach(item => item.classList.remove('active'));
+        languageSelector.style.display = 'none';
+        complexityInfo.style.display = 'none';
+        explanationContainer.style.display = 'none';
+        codeContainer.style.display = 'none';
+        customCodeContainer.style.display = 'flex';
+        guideBtn.style.display = 'block';
+
+        if (!customCodeEditor.getValue()) {
+            customCodeEditor.setValue(`function* isPalindrome(str) {\n  const len = str.length;\n  for (let i = 0; i < len / 2; i++) {\n    // Highlight the characters being compared\n    states[i] = 0;\n    states[len - 1 - i] = 0;\n    yield;\n\n    if (str[i] !== str[len - 1 - i]) {\n      // Not a palindrome, highlight the mismatched characters in red\n      states[i] = 1;\n      states[len - 1 - i] = 1;\n      yield;\n      return false;\n    }\n\n    // Characters match, highlight them in green\n    states[i] = 2;\n    states[len - 1 - i] = 2;\n    yield;\n  }\n\n  return true;\n}`);
+        }
+        if (sketch) sketch.reset();
+    });
+
     viewButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             currentView = btn.dataset.view;
             viewButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            if (currentView === 'array') {
-                customArrayContainer.classList.remove('hidden');
-            } else {
-                customArrayContainer.classList.add('hidden');
-            }
-
             if (sketch) sketch.reset();
         });
-    });
-
-    stepsBtn.addEventListener('click', () => {
-        const algoData = getAlgoData(currentCategory, currentAlgorithm);
-        if (algoData && algoData.pseudocode) {
-            const modal = document.getElementById('steps-modal');
-            const title = modal.querySelector('#modal-title');
-            const body = modal.querySelector('#modal-body');
-            title.textContent = `${currentAlgorithm} - Pseudocode Steps`;
-            body.innerHTML = algoData.pseudocode.replace(/\n/g, '<br>');
-            modal.style.display = 'block';
-        }
-    });
-
-    customArrayBtn.addEventListener('click', () => {
-        const input = customArrayInput.value.trim();
-        if (input === '') {
-            alert('Please enter some numbers.');
-            return;
-        }
-        const customArray = input.split(/\s+/).map(Number);
-        if (customArray.some(isNaN)) {
-            alert('Invalid input. Please enter space-separated numbers only.');
-            return;
-        }
-        sketch.reset(customArray);
     });
 
     speedSlider.addEventListener('input', e => {
@@ -575,29 +312,34 @@ public class DFS {
         if (sketch) sketch.frameRate(parseInt(animationSpeed));
     });
 
-
-
-    explainBtn.addEventListener('click', async () => {
-        const code = customCodeInput.value.trim();
-        if (!code) {
-            explanationOutput.innerText = "Please enter some code first.";
-            return;
+    visualizeCustomCodeBtn.addEventListener('click', () => {
+        if (worker) {
+            worker.terminate();
         }
-        explanationOutput.innerText = "Analyzing...";
-        try {
-            const response = await fetch("http://localhost:3000/analyze", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code })
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        worker = new Worker('worker.js');
+        worker.postMessage({ code: customCodeEditor.getValue(), values });
+        visualizeCustomCodeBtn.innerText = 'Analyzing...';
+        worker.onmessage = function(event) {
+            if (event.data.error) {
+                alert(event.data.error);
+                visualizeCustomCodeBtn.innerText = 'Visualize';
+                return;
             }
-            const data = await response.json();
-            explanationOutput.innerHTML = marked.parse(data.summary);
-        } catch (error) {
-            explanationOutput.innerText = "Could not generate summary. Please try again.";
-        }
+            const { time, space, explanation, steps } = event.data;
+            timeComplexityEl.textContent = time;
+            spaceComplexityEl.textContent = space;
+            explanation.textContent = explanation;
+            complexityInfo.style.display = 'flex';
+            explanationContainer.style.display = 'flex';
+            visualizeCustomCodeBtn.innerText = 'Visualize';
+            sorter = (function*() {
+                for (const step of steps) {
+                    states = step;
+                    yield;
+                }
+            })();
+            sketch.loop();
+        };
     });
 
     const s = (p) => {
@@ -612,19 +354,40 @@ public class DFS {
 
         p.draw = () => {
             p.background('#1E1E1E');
-            if (sorter) { 
+            if (sorter) {
                 let result = sorter.next();
                 if (result.done) {
                     sorter = null;
                     p.noLoop();
                 }
             }
-            if (currentCategory === 'graph') {
+            if (currentCategory === 'string') {
+                drawString();
+            } else if (currentCategory === 'graph') {
                 drawGraph();
             } else {
                 if (currentView === 'bars') drawBars(); else drawArray();
             }
         };
+
+        function drawString() {
+            let n = values.length;
+            let boxSize = p.min(p.width / (n + 1), 60);
+            let startX = (p.width - n * boxSize - (n - 1) * 5) / 2;
+            let y = p.height / 2;
+            for (let i = 0; i < n; i++) {
+                if (values[i] === undefined) continue;
+                p.stroke(getColor(states[i]));
+                p.strokeWeight(3);
+                p.fill('#2a2a2a');
+                p.rect(startX + i * (boxSize + 5), y - boxSize / 2, boxSize, boxSize, 8);
+                p.noStroke();
+                p.fill('#E0E0E0');
+                p.textAlign(p.CENTER, p.CENTER);
+                p.textSize(boxSize * 0.5);
+                p.text(values[i], startX + i * (boxSize + 5) + boxSize / 2, y);
+            }
+        }
 
         function drawBars() {
             let w = p.width / values.length;
@@ -695,100 +458,95 @@ public class DFS {
             return '#424242';
         }
 
-        p.reset = (customArray) => {
-            p.noLoop();
-            if (customArray && customArray.length > 0) {
-                values = [...customArray];
-                if (currentCategory === 'searching') {
-                    if (currentAlgorithm === 'Binary Search') {
-                        values.sort((a, b) => a - b);
+                p.reset = () => {
+                    p.noLoop();
+                    if (currentCategory === 'string') {
+                        values = 'level'.split('');
+                        states = new Array(values.length).fill(-1);
+                    } else if (currentCategory === 'graph') {
+                        setupGraph();
+                        states = new Array(graph.nodes.length).fill(-1);
+                    } else {
+                        let numElements = currentView === 'bars' ? 50 : 12;
+                        values = Array.from({ length: numElements }, () => p.floor(p.random(1, 100)));
+                        if (currentView === 'bars' && p.height > 0) {
+                            values = values.map(v => p.map(v, 1, 100, 15, p.height - 20));
+                        }
+                        states = new Array(values.length).fill(-1);
+                        if (currentCategory === 'searching') {
+                            values.sort((a, b) => a - b);
+                            const targetValue = values[p.floor(p.random(values.length))];
+                            searchInput.value = Math.floor(targetValue);
+                        }
                     }
-                    const targetValue = values[p.floor(p.random(values.length))];
-                    searchInput.value = Math.floor(targetValue);
+                    sorter = getSorter();
+                    p.redraw();
+                };
+
+                function setupGraph() {
+                    graph = new Graph(6);
+                    graph.addEdge(0, 1);
+                    graph.addEdge(0, 2);
+                    graph.addEdge(1, 3);
+                    graph.addEdge(1, 4);
+                    graph.addEdge(2, 4);
+                    graph.addEdge(3, 4);
+                    graph.addEdge(3, 5);
+                    graph.addEdge(4, 5);
+                    graph.positionNodes(p.width, p.height);
                 }
-                // Ensure array view is active for custom arrays
-                if (currentView !== 'array') {
-                    currentView = 'array';
-                    viewButtons.forEach(b => b.classList.remove('active'));
-                    document.querySelector('.view-btn[data-view="array"]').classList.add('active');
+
+                class Graph {
+                    constructor(numNodes) {
+                        this.nodes = [];
+                        this.adj = [];
+                        for (let i = 0; i < numNodes; i++) {
+                            this.nodes.push({ x: 0, y: 0 });
+                            this.adj.push([]);
+                        }
+                    }
+
+                    addEdge(u, v) {
+                        this.adj[u].push(v);
+                        this.adj[v].push(u);
+                    }
+
+                    positionNodes(width, height) {
+                        for (let i = 0; i < this.nodes.length; i++) {
+                            this.nodes[i].x = p.random(50, width - 50);
+                            this.nodes[i].y = p.random(50, height - 50);
+                        }
+                    }
                 }
-            } else if (currentCategory === 'graph') {
-                setupGraph();
-                states = new Array(graph.nodes.length).fill(-1);
-            } else {
-                let numElements = currentView === 'bars' ? 50 : 12;
-                values = Array.from({ length: numElements }, () => p.floor(p.random(1, 100)));
-                if (currentView === 'bars' && p.height > 0) {
-                    values = values.map(v => p.map(v, 1, 100, 15, p.height - 20));
+        
+                function getSorter() {
+                    if (currentAlgorithm === 'Custom') {
+                        try {
+                            const userCode = customCodeEditor.getValue();
+                            const customAlgorithm = eval(`(${userCode})`);
+                            return customAlgorithm(values, states);
+                        } catch (e) {
+                            console.error("Error in custom algorithm:", e);
+                            alert("Error in your custom algorithm. Check the console for details.");
+                            return null;
+                        }
+                    }
+                    let target = parseInt(searchInput.value);
+                    switch (currentAlgorithm) {
+                        case 'Bubble Sort': return bubbleSort(values, states);
+                        case 'Selection Sort': return selectionSort(values, states);
+                        case 'Insertion Sort': return insertionSort(values, states);
+                        case 'Shell Sort': return shellSort(values, states);
+                        case 'Merge Sort': return mergeSort(values, 0, values.length - 1, states);
+                        case 'Quick Sort': return quickSort(values, 0, values.length - 1, states);
+                        case 'Linear Search': return linearSearch(values, states, target);
+                        case 'Binary Search': return binarySearch(values, states, target);
+                        case 'Palindrome': return isPalindrome(values, states);
+                        case 'Dijkstra': return dijkstra(graph, 0, states);
+                        case 'BFS': return bfs(graph, 0, states);
+                        case 'DFS': return dfs(graph, 0, states);
+                    }
                 }
-                if (currentCategory === 'searching') {
-                    values.sort((a, b) => a - b);
-                    const targetValue = values[p.floor(p.random(values.length))];
-                    searchInput.value = Math.floor(targetValue);
-                }
-            }
-
-            if (currentCategory !== 'graph') {
-                states = new Array(values.length).fill(-1);
-            }
-
-            sorter = getSorter();
-            p.redraw();
-        };
-
-        function setupGraph() {
-            graph = new Graph(6);
-            graph.addEdge(0, 1);
-            graph.addEdge(0, 2);
-            graph.addEdge(1, 3);
-            graph.addEdge(1, 4);
-            graph.addEdge(2, 4);
-            graph.addEdge(3, 4);
-            graph.addEdge(3, 5);
-            graph.addEdge(4, 5);
-            graph.positionNodes(p.width, p.height);
-        }
-
-        class Graph {
-            constructor(numNodes) {
-                this.nodes = [];
-                this.adj = [];
-                for (let i = 0; i < numNodes; i++) {
-                    this.nodes.push({ x: 0, y: 0 });
-                    this.adj.push([]);
-                }
-            }
-
-            addEdge(u, v) {
-                this.adj[u].push(v);
-                this.adj[v].push(u);
-            }
-
-            positionNodes(width, height) {
-                for (let i = 0; i < this.nodes.length; i++) {
-                    this.nodes[i].x = p.random(50, width - 50);
-                    this.nodes[i].y = p.random(50, height - 50);
-                }
-            }
-        }
-
-        function getSorter() {
-            let target = parseInt(searchInput.value);
-            switch (currentAlgorithm) {
-                case 'Bubble Sort': return bubbleSort(values, states);
-                case 'Selection Sort': return selectionSort(values, states);
-                case 'Insertion Sort': return insertionSort(values, states);
-                case 'Shell Sort': return shellSort(values, states);
-                case 'Merge Sort': return mergeSort(values, 0, values.length - 1, states);
-                case 'Quick Sort': return quickSort(values, 0, values.length - 1, states);
-                case 'Linear Search': return linearSearch(values, states, target);
-                case 'Binary Search': return binarySearch(values, states, target);
-                case 'Dijkstra': return dijkstra(graph, 0, states);
-                case 'BFS': return bfs(graph, 0, states);
-                case 'DFS': return dfs(graph, 0, states);
-            }
-        }
-
         function* bubbleSort(arr, states) {
             for (let i = 0; i < arr.length; i++) {
                 for (let j = 0; j < arr.length - i - 1; j++) {
@@ -1004,6 +762,28 @@ public class DFS {
             }
         }
 
+        function* isPalindrome(str, states) {
+            const len = str.length;
+            for (let i = 0; i < len / 2; i++) {
+                states[i] = 0;
+                states[len - 1 - i] = 0;
+                yield;
+
+                if (str[i] !== str[len - 1 - i]) {
+                    states[i] = 1;
+                    states[len - 1 - i] = 1;
+                    yield;
+                    return false;
+                }
+
+                states[i] = 2;
+                states[len - 1 - i] = 2;
+                yield;
+            }
+
+            return true;
+        }
+        
         function* dijkstra(graph, startNode, states) {
             let dist = new Array(graph.nodes.length).fill(Infinity);
             dist[startNode] = 0;
@@ -1080,16 +860,6 @@ public class DFS {
 
     sketch = new p5(s);
     setupSidebar();
-
-    // Expose a resize handler on the sketch object
-    sketch.resize = () => {
-        const container = document.getElementById('visualization-container');
-        sketch.resizeCanvas(container.offsetWidth, container.offsetHeight);
-        if (currentCategory === 'graph' && graph) {
-            graph.positionNodes(sketch.width, sketch.height);
-        }
-        sketch.redraw();
-    }
 
     playBtn.addEventListener('click', () => sketch.loop());
     pauseBtn.addEventListener('click', () => sketch.noLoop());
