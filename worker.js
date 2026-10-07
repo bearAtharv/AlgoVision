@@ -53,3 +53,5 @@ function generateExplanation(code) {
 
     return explanation.join('\n');
 }
+
+// Worker initialized successfully
