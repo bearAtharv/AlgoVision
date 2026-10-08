@@ -58,4 +58,40 @@ assert(scriptSource.includes('p.getValues = () => values'), 'p.getValues must be
 assert(scriptSource.includes('sketch.getValues()'), 'worker call must use sketch.getValues()');
 console.log('✓ Test 5: Responsive canvas and state getters verified');
 
-console.log('\nAll 5 verification checks passed successfully!');
+// Test 6 (PR 2 TDD): Verify multi-language code snippets (JS, Python, C++, Java)
+const cleanScript = scriptSource.replace(/\r\n/g, '\n');
+const algoStart = cleanScript.indexOf('const algorithms = {');
+const algoEnd = cleanScript.indexOf(';\n\n    const learnContent = {');
+assert(algoStart !== -1 && algoEnd !== -1, 'algorithms object must be bounded in script.js');
+const algorithms = new Function(`return ${cleanScript.slice(algoStart + 'const algorithms = '.length, algoEnd)}`)();
+
+const requiredLangs = ['javascript', 'python', 'cpp', 'java'];
+for (const [category, algos] of Object.entries(algorithms)) {
+    for (const [name, algo] of Object.entries(algos)) {
+        for (const lang of requiredLangs) {
+            const code = algo.code && algo.code[lang];
+            assert(code && code.trim().length > 30, `Algorithm "${name}" must have code for ${lang}`);
+            assert(!code.includes('will go here'), `Algorithm "${name}" has placeholder comment for ${lang}`);
+        }
+    }
+}
+console.log('✓ Test 6: Multi-language code snippets verified for all algorithms');
+
+// Test 7 (PR 2 TDD): Verify learnContent coverage for all algorithms
+const learnStart = cleanScript.indexOf('const learnContent = {');
+const learnEnd = cleanScript.indexOf(';\n\n    function getAlgoData(');
+assert(learnStart !== -1 && learnEnd !== -1, 'learnContent object must be bounded in script.js');
+const learnContent = new Function(`return ${cleanScript.slice(learnStart + 'const learnContent = '.length, learnEnd)}`)();
+
+for (const [category, algos] of Object.entries(algorithms)) {
+    for (const [name] of Object.entries(algos)) {
+        const content = learnContent[name];
+        assert(content, `learnContent must have an entry for "${name}"`);
+        assert(content.explanation && content.explanation.length > 20, `"${name}" must have explanation`);
+        assert(content.howItWorks && content.howItWorks.length > 20, `"${name}" must have howItWorks`);
+        assert(content.code && content.code.length > 20, `"${name}" must have code`);
+    }
+}
+console.log('✓ Test 7: Learn mode content coverage verified for all algorithms');
+
+console.log('\nAll 7 verification checks passed successfully!');

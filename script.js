@@ -141,40 +141,94 @@ document.addEventListener('DOMContentLoaded', () => {
             'Dijkstra': {
                 complexity: { time: 'O(E log V)', space: 'O(V)' },
                 code: {
-                    javascript: `function dijkstra(graph, startNode) {\n  let distances = {};\n  let prev = {};\n  let pq = new PriorityQueue();\n\n  distances[startNode] = 0;\n  pq.enqueue(startNode, 0);\n\n  for (let vertex in graph) {\n    if (vertex !== startNode) {\n      distances[vertex] = Infinity;\n    }\n    prev[vertex] = null;\n  }\n\n  while (!pq.isEmpty()) {\n    let minNode = pq.dequeue().element;\n\n    for (let neighbor in graph[minNode]) {\n      let newDist = distances[minNode] + graph[minNode][neighbor];\n\n      if (newDist < distances[neighbor]) {\n        distances[neighbor] = newDist;\n        prev[neighbor] = minNode;\n        pq.enqueue(neighbor, newDist);\n      }\n    }\n  }\n\n  return { distances, prev };\n}`,
-                    python: `# Python code for Dijkstra's algorithm will go here`,
-                    cpp: `// C++ code for Dijkstra's algorithm will go here`,
-                    java: `// Java code for Dijkstra's algorithm will go here`
+                    javascript: `function dijkstra(graph, startNode) {\n  let distances = {};\n  let prev = {};\n  let pq = new PriorityQueue();\n\n  distances[startNode] = 0;\n  pq.enqueue(startNode, 0);\n\n  for (let vertex in graph) {\n    if (vertex !== startNode) distances[vertex] = Infinity;\n    prev[vertex] = null;\n  }\n\n  while (!pq.isEmpty()) {\n    let minNode = pq.dequeue().element;\n    for (let neighbor in graph[minNode]) {\n      let newDist = distances[minNode] + graph[minNode][neighbor];\n      if (newDist < distances[neighbor]) {\n        distances[neighbor] = newDist;\n        prev[neighbor] = minNode;\n        pq.enqueue(neighbor, newDist);\n      }\n    }\n  }\n  return { distances, prev };\n}`,
+                    python: `import heapq\n\ndef dijkstra(graph, start):\n    distances = {node: float('inf') for node in graph}\n    distances[start] = 0\n    pq = [(0, start)]\n    while pq:\n        curr_dist, u = heapq.heappop(pq)\n        if curr_dist > distances[u]:\n            continue\n        for v, weight in graph[u].items():\n            dist = curr_dist + weight\n            if dist < distances[v]:\n                distances[v] = dist\n                heapq.heappush(pq, (dist, v))\n    return distances`,
+                    cpp: `#include <vector>\n#include <queue>\nusing namespace std;\n\nvector<int> dijkstra(int V, vector<vector<pair<int, int>>>& adj, int S) {\n    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;\n    vector<int> dist(V, 1e9);\n    dist[S] = 0;\n    pq.push({0, S});\n    while (!pq.empty()) {\n        int u = pq.top().second;\n        pq.pop();\n        for (auto& edge : adj[u]) {\n            int v = edge.first, w = edge.second;\n            if (dist[v] > dist[u] + w) {\n                dist[v] = dist[u] + w;\n                pq.push({dist[v], v});\n            }\n        }\n    }\n    return dist;\n}`,
+                    java: `import java.util.*;\n\nclass Dijkstra {\n    public int[] dijkstra(int V, List<List<int[]>> adj, int S) {\n        int[] dist = new int[V];\n        Arrays.fill(dist, Integer.MAX_VALUE);\n        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));\n        dist[S] = 0;\n        pq.offer(new int[]{S, 0});\n        while (!pq.isEmpty()) {\n            int[] curr = pq.poll();\n            int u = curr[0];\n            for (int[] edge : adj.get(u)) {\n                int v = edge[0], w = edge[1];\n                if (dist[v] > dist[u] + w) {\n                    dist[v] = dist[u] + w;\n                    pq.offer(new int[]{v, dist[v]});\n                }\n            }\n        }\n        return dist;\n    }\n}`
                 }
             },
             'BFS': {
                 complexity: { time: 'O(V + E)', space: 'O(V)' },
                 code: {
-                    javascript: `function bfs(graph, startNode) {\n  let visited = {};\n  let queue = [];\n\n  visited[startNode] = true;\n  queue.push(startNode);\n\n  while (queue.length > 0) {\n    let currentNode = queue.shift();\n\n    for (let neighbor of graph[currentNode]) {\n      if (!visited[neighbor]) {\n        visited[neighbor] = true;\n        queue.push(neighbor);\n      }\n    }\n  }\n}`,
-                    python: `# Python code for BFS algorithm will go here`,
-                    cpp: `// C++ code for BFS algorithm will go here`,
-                    java: `// Java code for BFS algorithm will go here`
+                    javascript: `function bfs(graph, startNode) {\n  let visited = {};\n  let queue = [];\n\n  visited[startNode] = true;\n  queue.push(startNode);\n\n  while (queue.length > 0) {\n    let currentNode = queue.shift();\n    for (let neighbor of graph[currentNode]) {\n      if (!visited[neighbor]) {\n        visited[neighbor] = true;\n        queue.push(neighbor);\n      }\n    }\n  }\n}`,
+                    python: `from collections import deque\n\ndef bfs(graph, start):\n    visited = set([start])\n    queue = deque([start])\n    traversal = []\n    while queue:\n        node = queue.popleft()\n        traversal.append(node)\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append(neighbor)\n    return traversal`,
+                    cpp: `#include <vector>\n#include <queue>\nusing namespace std;\n\nvector<int> bfsOfGraph(int V, vector<int> adj[], int startNode) {\n    vector<int> bfs;\n    vector<bool> vis(V, false);\n    queue<int> q;\n    q.push(startNode);\n    vis[startNode] = true;\n    while (!q.empty()) {\n        int node = q.front();\n        q.pop();\n        bfs.push_back(node);\n        for (int neighbor : adj[node]) {\n            if (!vis[neighbor]) {\n                vis[neighbor] = true;\n                q.push(neighbor);\n            }\n        }\n    }\n    return bfs;\n}`,
+                    java: `import java.util.*;\n\nclass BFS {\n    public List<Integer> bfs(int V, List<List<Integer>> adj, int start) {\n        List<Integer> order = new ArrayList<>();\n        boolean[] visited = new boolean[V];\n        Queue<Integer> queue = new LinkedList<>();\n        visited[start] = true;\n        queue.offer(start);\n        while (!queue.isEmpty()) {\n            int node = queue.poll();\n            order.add(node);\n            for (int neighbor : adj.get(node)) {\n                if (!visited[neighbor]) {\n                    visited[neighbor] = true;\n                    queue.offer(neighbor);\n                }\n            }\n        }\n        return order;\n    }\n}`
                 }
             },
             'DFS': {
                 complexity: { time: 'O(V + E)', space: 'O(V)' },
                 code: {
-                    javascript: `function dfs(graph, startNode) {\n  let visited = {};\n\n  function traverse(vertex) {\n    if (!vertex) return;\n\n    visited[vertex] = true;\n\n    for (let neighbor of graph[vertex]) {\n      if (!visited[neighbor]) {\n        traverse(neighbor);\n      }\n    }\n  }\n\n  traverse(startNode);\n}`,
-                    python: `# Python code for DFS algorithm will go here`,
-                    cpp: `// C++ code for DFS algorithm will go here`,
-                    java: `// Java code for DFS algorithm will go here`
+                    javascript: `function dfs(graph, startNode) {\n  let visited = {};\n  function traverse(vertex) {\n    if (!vertex) return;\n    visited[vertex] = true;\n    for (let neighbor of graph[vertex]) {\n      if (!visited[neighbor]) traverse(neighbor);\n    }\n  }\n  traverse(startNode);\n}`,
+                    python: `def dfs(graph, start, visited=None):\n    if visited is None:\n        visited = set()\n    visited.add(start)\n    traversal = [start]\n    for neighbor in graph.get(start, []):\n        if neighbor not in visited:\n            traversal.extend(dfs(graph, neighbor, visited))\n    return traversal`,
+                    cpp: `#include <vector>\nusing namespace std;\n\nvoid dfsHelper(int node, vector<int> adj[], vector<bool>& vis, vector<int>& res) {\n    vis[node] = true;\n    res.push_back(node);\n    for (int neighbor : adj[node]) {\n        if (!vis[neighbor]) dfsHelper(neighbor, adj, vis, res);\n    }\n}\n\nvector<int> dfsOfGraph(int V, vector<int> adj[], int startNode) {\n    vector<bool> vis(V, false);\n    vector<int> res;\n    dfsHelper(startNode, adj, vis, res);\n    return res;\n}`,
+                    java: `import java.util.*;\n\nclass DFS {\n    private void dfsUtil(int node, List<List<Integer>> adj, boolean[] visited, List<Integer> res) {\n        visited[node] = true;\n        res.add(node);\n        for (int neighbor : adj.get(node)) {\n            if (!visited[neighbor]) dfsUtil(neighbor, adj, visited, res);\n        }\n    }\n    public List<Integer> dfs(int V, List<List<Integer>> adj, int start) {\n        boolean[] visited = new boolean[V];\n        List<Integer> res = new ArrayList<>();\n        dfsUtil(start, adj, visited, res);\n        return res;\n    }\n}`
                 }
             }
         }
     };
 
     const learnContent = {
+        'Bubble Sort': {
+            explanation: 'Bubble Sort repeatedly compares adjacent elements and swaps them if they are in the wrong order. With each pass, the largest unsorted element "bubbles up" to its correct position at the end of the array.',
+            howItWorks: '1. Traverse the array from the first element.\n2. Compare each pair of adjacent elements: if arr[j] > arr[j + 1], swap them.\n3. Repeat for n passes until no swaps are needed.',
+            code: `function bubbleSort(arr) {\n  for (let i = 0; i < arr.length; i++) {\n    for (let j = 0; j < arr.length - i - 1; j++) {\n      if (arr[j] > arr[j + 1]) {\n        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];\n      }\n    }\n  }\n  return arr;\n}`
+        },
+        'Selection Sort': {
+            explanation: 'Selection Sort segments the list into sorted and unsorted regions. In each iteration, it searches the unsorted region for the minimum element and places it at the boundary.',
+            howItWorks: '1. Find the smallest element in the unsorted portion of the array.\n2. Swap it with the element at the beginning of the unsorted segment.\n3. Advance the sorted partition by one and repeat.',
+            code: `function selectionSort(arr) {\n  for (let i = 0; i < arr.length - 1; i++) {\n    let min = i;\n    for (let j = i + 1; j < arr.length; j++) {\n      if (arr[j] < arr[min]) min = j;\n    }\n    if (min !== i) [arr[i], arr[min]] = [arr[min], arr[i]];\n  }\n  return arr;\n}`
+        },
+        'Insertion Sort': {
+            explanation: 'Insertion Sort builds the sorted array one element at a time by picking the next element and inserting it into its correct position relative to the already sorted prefix.',
+            howItWorks: '1. Start with the second element (index 1) as the key.\n2. Compare key with elements to its left, shifting larger elements one position to the right.\n3. Place the key into its correct sorted slot.',
+            code: `function insertionSort(arr) {\n  for (let i = 1; i < arr.length; i++) {\n    let key = arr[i], j = i - 1;\n    while (j >= 0 && arr[j] > key) {\n      arr[j + 1] = arr[j];\n      j--;\n    }\n    arr[j + 1] = key;\n  }\n  return arr;\n}`
+        },
+        'Shell Sort': {
+            explanation: 'Shell Sort is a generalized version of insertion sort that permits exchanging elements that are far apart. Using a diminishing gap sequence, it achieves faster average-case convergence.',
+            howItWorks: '1. Initialize gap size to floor(n / 2).\n2. Perform gapped insertion sort across all sub-sequences.\n3. Halve the gap size each pass until gap is 1, finishing with a final insertion sort pass.',
+            code: `function shellSort(arr) {\n  for (let gap = Math.floor(arr.length / 2); gap > 0; gap = Math.floor(gap / 2)) {\n    for (let i = gap; i < arr.length; i++) {\n      let temp = arr[i], j;\n      for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {\n        arr[j] = arr[j - gap];\n      }\n      arr[j] = temp;\n    }\n  }\n  return arr;\n}`
+        },
+        'Merge Sort': {
+            explanation: 'Merge Sort is a divide-and-conquer algorithm that recursively splits the input array into halves until subproblems contain 1 element, then merges the sorted halves together.',
+            howItWorks: '1. Divide the array into left and right halves.\n2. Recursively sort both halves.\n3. Merge the two sorted subarrays in linear time using two pointers.',
+            code: `function mergeSort(arr) {\n  if (arr.length <= 1) return arr;\n  const mid = Math.floor(arr.length / 2);\n  const left = mergeSort(arr.slice(0, mid));\n  const right = mergeSort(arr.slice(mid));\n  return merge(left, right);\n}`
+        },
+        'Quick Sort': {
+            explanation: 'Quick Sort is a highly efficient divide-and-conquer algorithm that selects a pivot element and partitions the array such that elements smaller than the pivot appear before it and larger elements appear after it.',
+            howItWorks: '1. Select a pivot element (e.g. the last element).\n2. Partition: rearrange array so elements < pivot are left and elements > pivot are right.\n3. Recursively apply Quick Sort to sub-arrays before and after pivot.',
+            code: `function quickSort(arr, low = 0, high = arr.length - 1) {\n  if (low < high) {\n    let pi = partition(arr, low, high);\n    quickSort(arr, low, pi - 1);\n    quickSort(arr, pi + 1, high);\n  }\n  return arr;\n}`
+        },
+        'Linear Search': {
+            explanation: 'Linear Search sequentially checks each element in the list starting from index 0 until the desired target value is found or the end of the array is reached.',
+            howItWorks: '1. Iterate through elements from index 0 to n - 1.\n2. Compare current element with the target value.\n3. If a match is found, return the index. If traversal finishes without match, return -1.',
+            code: `function linearSearch(arr, target) {\n  for (let i = 0; i < arr.length; i++) {\n    if (arr[i] === target) return i;\n  }\n  return -1;\n}`
+        },
+        'Binary Search': {
+            explanation: 'Binary Search is an optimal searching algorithm for sorted arrays that repeatedly bisects the search space in half, achieving logarithmic O(log n) performance.',
+            howItWorks: '1. Set low = 0 and high = length - 1.\n2. Calculate mid = floor((low + high) / 2).\n3. If arr[mid] == target, return mid.\n4. If arr[mid] < target, search right half (low = mid + 1). Else search left half (high = mid - 1).',
+            code: `function binarySearch(arr, target) {\n  let low = 0, high = arr.length - 1;\n  while (low <= high) {\n    let mid = Math.floor((low + high) / 2);\n    if (arr[mid] === target) return mid;\n    if (arr[mid] < target) low = mid + 1; else high = mid - 1;\n  }\n  return -1;\n}`
+        },
         'Palindrome': {
-            explanation: 'A palindrome is a word, phrase, number, or other sequence of characters that reads the same backward as forward, such as "madam" or "racecar".',
-            howItWorks: 'The most common way to check for a palindrome is to compare the characters from the start and the end of the string, moving inwards. If all characters match, it\'s a palindrome.',
-            code: `function isPalindrome(str) {\n  const len = str.length;\n  for (let i = 0; i < len / 2; i++) {\n    if (str[i] !== str[len - 1 - i]) {\n      return false;\n    }\n  }\n  return true;\n}`
+            explanation: 'A palindrome is a sequence of characters that reads the exact same forward and backward, such as "racecar" or "level".',
+            howItWorks: '1. Initialize two pointers at start and end of string.\n2. Compare characters: if any mismatch occurs, it is not a palindrome.\n3. Move pointers inward until they meet in the middle.',
+            code: `function isPalindrome(str) {\n  const len = str.length;\n  for (let i = 0; i < len / 2; i++) {\n    if (str[i] !== str[len - 1 - i]) return false;\n  }\n  return true;\n}`
+        },
+        'Dijkstra': {
+            explanation: 'Dijkstra\'s algorithm computes the shortest path from a source vertex to all other vertices in a weighted graph with non-negative edge weights.',
+            howItWorks: '1. Set distance to source as 0 and all other distances to Infinity.\n2. Greedily extract the unvisited node with minimum distance.\n3. Relax each adjacent edge: if dist[u] + weight < dist[v], update dist[v] and push to priority queue.',
+            code: `function dijkstra(graph, start) {\n  let dist = {}, pq = new PriorityQueue();\n  dist[start] = 0; pq.enqueue(start, 0);\n  while (!pq.isEmpty()) {\n    let u = pq.dequeue();\n    for (let [v, w] of graph[u]) {\n      if (dist[u] + w < (dist[v] || Infinity)) {\n        dist[v] = dist[u] + w;\n        pq.enqueue(v, dist[v]);\n      }\n    }\n  }\n  return dist;\n}`
+        },
+        'BFS': {
+            explanation: 'Breadth-First Search explores graph vertices level by level, visiting all direct neighbors of a vertex before traversing deeper into the graph.',
+            howItWorks: '1. Enqueue source node and mark it as visited.\n2. Dequeue front node from FIFO queue.\n3. Inspect all unvisited neighbors, mark them as visited, and enqueue them.\n4. Repeat until queue is empty.',
+            code: `function bfs(graph, start) {\n  let visited = new Set([start]), queue = [start], order = [];\n  while (queue.length > 0) {\n    let u = queue.shift();\n    order.push(u);\n    for (let v of graph[u]) {\n      if (!visited.has(v)) {\n        visited.add(v);\n        queue.push(v);\n      }\n    }\n  }\n  return order;\n}`
+        },
+        'DFS': {
+            explanation: 'Depth-First Search traverses deeply along each exploration branch as far as possible before backtracking to unvisited branch points.',
+            howItWorks: '1. Mark current node as visited and record it.\n2. For each neighbor not yet visited, recursively traverse that neighbor.\n3. Backtrack when current path hits a dead end.',
+            code: `function dfs(graph, start, visited = new Set(), order = []) {\n  visited.add(start);\n  order.push(start);\n  for (let neighbor of graph[start]) {\n    if (!visited.has(neighbor)) {\n      dfs(graph, neighbor, visited, order);\n    }\n  }\n  return order;\n}`
         }
-        // Add more explanations here
     };
 
     function getAlgoData(category, name) { return algorithms[category] ? algorithms[category][name] : undefined; }
