@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlgoVision Project Showcase</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #121212;
+            --surface-color: #1E1E1E;
+            --primary-color: #00A99D;
+            --primary-variant-color: #00877a;
+            --text-color: #E0E0E0;
+            --text-muted-color: #888;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        main {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4vw;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out, visibility 0.5s;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        h1, h2, h3, h4, p, li {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--primary-color);
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: #B0B0B0;
+            max-width: 800px;
+        }
+
+        p, li {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            max-width: 800px;
+        }
+
+        ul {
+            list-style: none;
+            text-align: left;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        li {
+            margin-bottom: 1.2rem;
+            padding-left: 2.5rem;
+            position: relative;
+        }
+
+        li::before {
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            content: '\f058'; /* check-circle */
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+            font-size: 1.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1100px;
+            text-align: left;
+            margin-top: 2rem;
+        }
+
+        .grid-item {
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid #333;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .grid-item i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .grid-item h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .grid-item p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #B0B0B0;
+        }
+
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(30, 30, 30, 0.7);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid #333;
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+        }
+
+        .nav-controls button {
+            background: var(--primary-color);
+            border: none;
+            color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .nav-controls button:hover {
+             background: var(--primary-variant-color);
+             transform: scale(1.1);
+        }
+        .nav-controls button:disabled {
+             background: #555;
+             cursor: not-allowed;
+             transform: scale(1);
+        }
+
+        #slide-counter {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            font-weight: 500;
+            min-width: 50px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <main id="presentation-container">
+        <!-- Slide 1: Title -->
+        <section class="slide active">
+            <i class="fas fa-project-diagram" style="font-size: 4rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+            <h1>AlgoVision</h1>
+            <h3>An Interactive Algorithm Visualization Platform</h3>
+            <p style="margin-top: 3rem; color: var(--text-muted-color);">Project Status & Future Roadmap (v1.8)</p>
+        </section>
+
+        <!-- Slide 2: Introduction -->
+        <section class="slide">
+            <h2>What is AlgoVision?</h2>
+            <h3>A tool designed to demystify complex algorithms by bringing them to life through interactive, step-by-step animations.</h3>
+            <p style="margin-top: 2rem;">It bridges the gap between abstract theory and practical understanding, providing a hands-on learning experience for students, educators, and developers.</p>
+        </section>
+
+        <!-- Slide 3: Core Features -->
+        <section class="slide">
+            <h2>Core Features</h2>
+            <div class="grid">
+                <div class="grid-item">
+                    <i class="fas fa-sitemap"></i>
+                    <h4>Diverse Algorithm Support</h4>
+                    <p>Visualize Sorting, Searching, and Graph algorithms in one unified interface.</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-code"></i>
+                    <h4>Multi-Language Code View</h4>
+                    <p>Instantly switch between JavaScript, Python, C++, and Java code for any selected algorithm.</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-cogs"></i>
+                    <h4>Playback & Speed Control</h4>
+                    <p>Play, pause, reset, and control the speed of the animation for a customized learning pace.</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-ruler-combined"></i>
+                    <h4>Multiple Data Views</h4>
+                    <p>Switch between a classic 'Array' view and a more dynamic 'Bars' visualization for array-based algorithms.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: Algorithm Showcase -->
+        <section class="slide">
+            <h2>Algorithm Showcase</h2>
+            <div class="grid">
+                <div class="grid-item">
+                    <i class="fas fa-sort-amount-down"></i>
+                    <h4>Sorting Algorithms</h4>
+                    <p>Bubble, Selection, Insertion, Shell, Merge, and Quick Sort. Watch how data is ordered step-by-step.</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-search"></i>
+                    <h4>Searching Algorithms</h4>
+                    <p>Linear and Binary Search. See how different strategies find a target in a dataset.</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-share-alt"></i>
+                    <h4>Graph Algorithms</h4>
+                    <p>Dijkstra's, BFS, and DFS. Explore how nodes and edges are traversed in graph structures.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: Interactive Learning Tools -->
+        <section class="slide">
+            <h2>Interactive Learning Tools</h2>
+            <div class="grid">
+                <div class="grid-item">
+                    <i class="fas fa-info-circle"></i>
+                    <h4>Algorithm Descriptions</h4>
+                    <p>Click the info icon on any algorithm to get a detailed, academic description of its purpose and methodology.</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-list-ol"></i>
+                    <h4>Pseudocode Steps</h4>
+                    <p>Click the 'Steps' button to see a simplified, plain-language breakdown of the algorithm's logic.</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-keyboard"></i>
+                    <h4>Custom Array Input</h4>
+                    <p>Input your own space-separated numbers to see how algorithms handle specific datasets.</p>
+                </div>
+                 <div class="grid-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h4>Complexity Analysis</h4>
+                    <p>Time and Space complexity for each algorithm is always visible for quick reference and comparison.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: Technology Stack -->
+        <section class="slide">
+            <h2>Technology Stack</h2>
+            <div class="grid">
+                <div class="grid-item">
+                    <i class="fab fa-html5"></i>
+                    <h4>HTML5 & CSS3</h4>
+                    <p>For structuring the application and creating a modern, responsive, and beautiful user interface.</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fab fa-js-square"></i>
+                    <h4>JavaScript (ES6+)</h4>
+                    <p>The core logic of the application, including the algorithm implementations and UI interactivity.</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-palette"></i>
+                    <h4>p5.js</h4>
+                    <p>A JavaScript library used to create the main visualization canvas and draw the animations.</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-highlighter"></i>
+                    <h4>Prism.js & Marked.js</h4>
+                    <p>Used for syntax highlighting in the code view and rendering markdown in the description modals.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 7: Future Roadmap -->
+        <section class="slide">
+            <h2>Future Roadmap</h2>
+            <ul>
+                <li><i class="fas fa-plus-circle" style="color: var(--primary-color); margin-right: 10px;"></i>More Algorithms & Data Structures (Trees, Heaps).</li>
+                <li><i class="fas fa-plus-circle" style="color: var(--primary-color); margin-right: 10px;"></i>Custom Code Editor to write and visualize your own algorithms.</li>
+                <li><i class="fas fa-plus-circle" style="color: var(--primary-color); margin-right: 10px;"></i>Interactive graph creation and editing directly in the UI.</li>
+                <li><i class="fas fa-plus-circle" style="color: var(--primary-color); margin-right: 10px;"></i>A "Learn" mode with guided tutorials and challenges.</li>
+                <li><i class="fas fa-plus-circle" style="color: var(--primary-color); margin-right: 10px;"></i>UI Themes (e.g., a toggle for a light mode).</li>
+            </ul>
+        </section>
+
+        <!-- Slide 8: Thank You -->
+        <section class="slide">
+            <h1>Thank You</h1>
+            <h3>By Saran & Atharv</h3>
+        </section>
+
+    </main>
+
+    <div class="nav-controls">
+        <button id="prev-btn" title="Previous Slide"><i class="fas fa-arrow-left"></i></button>
+        <span id="slide-counter"></span>
+        <button id="next-btn" title="Next Slide"><i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const slideCounter = document.getElementById('slide-counter');
+            let currentSlide = 0;
+
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                currentSlide = index;
+                slides[currentSlide].classList.add('active');
+                slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+                prevBtn.disabled = currentSlide === 0;
+                nextBtn.disabled = currentSlide === slides.length - 1;
+            }
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSlide > 0) showSlide(currentSlide - 1);
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSlide < slides.length - 1) showSlide(currentSlide + 1);
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+                    showSlide(currentSlide + 1);
+                } else if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+                    showSlide(currentSlide - 1);
+                }
+            });
+            
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>
