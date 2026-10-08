@@ -24,6 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const speedSlider = document.getElementById('speed-slider');
     const customAlgoBtn = document.getElementById('custom-algo-btn');
     const learnBtn = document.getElementById('learn-btn');
+    const guideBtn = document.getElementById('guide-btn');
+    const guideModal = document.getElementById('guide-modal');
+    const learnModal = document.getElementById('learn-modal');
+    const closeBtns = document.querySelectorAll('.close-btn');
     const languageSelector = document.getElementById('language-selector');
     const complexityInfo = document.getElementById('complexity-info');
     const codeContainer = document.getElementById('code-container');
@@ -34,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mode: 'javascript'
     });
     const explanationContainer = document.getElementById('explanation-container');
-    const explanation = document.getElementById('explanation');
+    const explanationEl = document.getElementById('explanation');
     const visualizeCustomCodeBtn = document.getElementById('visualize-custom-code-btn');
 
     let currentAlgorithm = 'Bubble Sort';
@@ -190,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             timeComplexityEl.textContent = algoData.complexity.time;
             spaceComplexityEl.textContent = algoData.complexity.space;
         }
-        searchInputContainer.style.display = currentCategory === 'searching' || currentCategory === 'string' ? 'none' : 'flex';
+        searchInputContainer.style.display = currentCategory === 'searching' ? 'flex' : 'none';
         updateCodeView();
         if (sketch) sketch.reset();
     }
@@ -242,11 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCodeView();
         });
     });
-
-    const guideBtn = document.getElementById('guide-btn');
-    const guideModal = document.getElementById('guide-modal');
-    const learnModal = document.getElementById('learn-modal');
-    const closeBtns = document.querySelectorAll('.close-btn');
 
     guideBtn.addEventListener('click', () => {
         guideModal.style.display = 'block';
@@ -317,7 +316,8 @@ document.addEventListener('DOMContentLoaded', () => {
             worker.terminate();
         }
         worker = new Worker('worker.js');
-        worker.postMessage({ code: customCodeEditor.getValue(), values });
+        const currentValues = sketch ? sketch.getValues() : [];
+        worker.postMessage({ code: customCodeEditor.getValue(), values: currentValues });
         visualizeCustomCodeBtn.innerText = 'Analyzing...';
         worker.onmessage = function(event) {
             if (event.data.error) {
@@ -325,31 +325,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 visualizeCustomCodeBtn.innerText = 'Visualize';
                 return;
             }
-            const { time, space, explanation, steps } = event.data;
+            const { time, space, explanation: explanationText, steps } = event.data;
             timeComplexityEl.textContent = time;
             spaceComplexityEl.textContent = space;
-            explanation.textContent = explanation;
+            if (explanationEl) explanationEl.textContent = explanationText;
             complexityInfo.style.display = 'flex';
             explanationContainer.style.display = 'flex';
             visualizeCustomCodeBtn.innerText = 'Visualize';
-            sorter = (function*() {
-                for (const step of steps) {
-                    states = step;
-                    yield;
-                }
-            })();
-            sketch.loop();
+            if (sketch) {
+                sketch.setSorter((function*() {
+                    for (const step of steps) {
+                        sketch.setStates(step);
+                        yield;
+                    }
+                })());
+                sketch.loop();
+            }
         };
     });
 
     const s = (p) => {
         let values = [], states = [], sorter, graph;
 
+        p.getValues = () => values;
+        p.setValues = (newVals) => { values = newVals; };
+        p.getStates = () => states;
+        p.setStates = (newStates) => { states = newStates; };
+        p.setSorter = (newSorter) => { sorter = newSorter; };
+
         p.setup = () => {
             const container = document.getElementById('visualization-container');
             const canvas = p.createCanvas(container.offsetWidth, container.offsetHeight);
             canvas.parent('visualization-container');
             p.frameRate(animationSpeed);
+        };
+
+        p.windowResized = () => {
+            const container = document.getElementById('visualization-container');
+            if (container && (p.width !== container.offsetWidth || p.height !== container.offsetHeight)) {
+                p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+                p.reset();
+            }
         };
 
         p.draw = () => {
@@ -531,7 +547,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             return null;
                         }
                     }
-                    let target = parseInt(searchInput.value);
+                    let target = parseInt(searchInput.value, 10);
+                    if (isNaN(target)) target = 0;
                     switch (currentAlgorithm) {
                         case 'Bubble Sort': return bubbleSort(values, states);
                         case 'Selection Sort': return selectionSort(values, states);
@@ -864,5 +881,10 @@ document.addEventListener('DOMContentLoaded', () => {
     playBtn.addEventListener('click', () => sketch.loop());
     pauseBtn.addEventListener('click', () => sketch.noLoop());
     resetBtn.addEventListener('click', () => sketch.reset());
+    searchInput.addEventListener('input', () => {
+        if (sketch && currentCategory === 'searching') {
+            sketch.reset();
+        }
+    });
 });
 // AlgoVision v2.0 - Verified & Ready
