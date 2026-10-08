@@ -94,4 +94,33 @@ for (const [category, algos] of Object.entries(algorithms)) {
 }
 console.log('✓ Test 7: Learn mode content coverage verified for all algorithms');
 
-console.log('\nAll 7 verification checks passed successfully!');
+// Test 8 (PR 3 TDD): Verify State Legend in HTML and CSS
+const htmlSource = fs.readFileSync('index.html', 'utf8');
+const cssSource = fs.readFileSync('style.css', 'utf8');
+
+assert(htmlSource.includes('id="legend-container"'), 'index.html must include #legend-container');
+assert(htmlSource.includes('legend-comparing'), 'index.html must include comparing state in legend');
+assert(htmlSource.includes('legend-swapping'), 'index.html must include swapping state in legend');
+assert(htmlSource.includes('legend-sorted'), 'index.html must include sorted state in legend');
+assert(htmlSource.includes('legend-special'), 'index.html must include special/pivot state in legend');
+assert(cssSource.includes('#legend-container'), 'style.css must define #legend-container');
+assert(cssSource.includes('.legend-color'), 'style.css must define .legend-color');
+console.log('✓ Test 8: State Legend elements & styling verified');
+
+// Test 9 (PR 3 TDD): Verify Live Metrics HUD in HTML & script.js
+assert(htmlSource.includes('id="metric-comparisons"'), 'index.html must include #metric-comparisons');
+assert(htmlSource.includes('id="metric-swaps"'), 'index.html must include #metric-swaps');
+assert(htmlSource.includes('id="metric-steps"'), 'index.html must include #metric-steps');
+assert(scriptSource.includes('metric-comparisons'), 'script.js must bind #metric-comparisons');
+assert(scriptSource.includes('metric-swaps'), 'script.js must bind #metric-swaps');
+assert(scriptSource.includes('metric-steps'), 'script.js must bind #metric-steps');
+assert(scriptSource.includes('metrics.steps++') || scriptSource.includes('metrics.steps += 1') || scriptSource.includes('stepCount++'), 'script.js must increment steps metric');
+console.log('✓ Test 9: Live Metrics HUD elements & tracking verified');
+
+// Test 10 (PR 3 TDD): Verify Deterministic Circular Graph Layout
+assert(!cleanScript.includes('this.nodes[i].x = p.random'), 'Graph node x must not use p.random');
+assert(!cleanScript.includes('this.nodes[i].y = p.random'), 'Graph node y must not use p.random');
+assert(cleanScript.includes('Math.cos') && cleanScript.includes('Math.sin'), 'Graph node positioning must use deterministic trigonometry');
+console.log('✓ Test 10: Deterministic graph layout verified');
+
+console.log('\nAll 10 verification checks passed successfully!');

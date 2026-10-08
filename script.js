@@ -15,6 +15,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     const timeComplexityEl = document.getElementById('time-complexity');
     const spaceComplexityEl = document.getElementById('space-complexity');
+    const comparisonsEl = document.getElementById('metric-comparisons');
+    const swapsEl = document.getElementById('metric-swaps');
+    const stepsEl = document.getElementById('metric-steps');
+
+    const metrics = { steps: 0, comparisons: 0, swaps: 0 };
+    function updateMetricsDisplay() {
+        if (comparisonsEl) comparisonsEl.textContent = metrics.comparisons;
+        if (swapsEl) swapsEl.textContent = metrics.swaps;
+        if (stepsEl) stepsEl.textContent = metrics.steps;
+    }
+    function resetMetrics() {
+        metrics.steps = 0;
+        metrics.comparisons = 0;
+        metrics.swaps = 0;
+        updateMetricsDisplay();
+    }
     const codeBlock = document.getElementById('code-block');
     const langButtons = document.querySelectorAll('.lang-btn');
     const viewButtons = document.querySelectorAll('.view-btn');
@@ -426,7 +442,12 @@ document.addEventListener('DOMContentLoaded', () => {
             p.background('#1E1E1E');
             if (sorter) {
                 let result = sorter.next();
-                if (result.done) {
+                if (!result.done) {
+                    metrics.steps++;
+                    if (states.includes(0)) metrics.comparisons++;
+                    if (states.includes(1)) metrics.swaps++;
+                    updateMetricsDisplay();
+                } else {
                     sorter = null;
                     p.noLoop();
                 }
@@ -495,13 +516,16 @@ document.addEventListener('DOMContentLoaded', () => {
         function drawGraph() {
             if (!graph) return;
             // Draw edges
-            p.stroke('#888');
+            p.stroke('#666');
             p.strokeWeight(2);
             for (let i = 0; i < graph.nodes.length; i++) {
                 for (let j = 0; j < graph.adj[i].length; j++) {
-                    let u = graph.nodes[i];
-                    let v = graph.nodes[graph.adj[i][j]];
-                    p.line(u.x, u.y, v.x, v.y);
+                    let neighbor = graph.adj[i][j];
+                    if (i < neighbor) {
+                        let u = graph.nodes[i];
+                        let v = graph.nodes[neighbor];
+                        p.line(u.x, u.y, v.x, v.y);
+                    }
                 }
             }
 
@@ -530,6 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 p.reset = () => {
                     p.noLoop();
+                    resetMetrics();
                     if (currentCategory === 'string') {
                         values = 'level'.split('');
                         states = new Array(values.length).fill(-1);
@@ -582,9 +607,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     positionNodes(width, height) {
+                        const centerX = width / 2;
+                        const centerY = height / 2;
+                        const radius = Math.min(width, height) * 0.35;
                         for (let i = 0; i < this.nodes.length; i++) {
-                            this.nodes[i].x = p.random(50, width - 50);
-                            this.nodes[i].y = p.random(50, height - 50);
+                            const angle = (i * 2 * Math.PI / this.nodes.length) - Math.PI / 2;
+                            this.nodes[i].x = centerX + radius * Math.cos(angle);
+                            this.nodes[i].y = centerY + radius * Math.sin(angle);
                         }
                     }
                 }

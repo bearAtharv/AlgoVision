@@ -53,6 +53,12 @@
             </div>
             <div class="visualization-wrapper">
                 <div id="vis-header">
+                    <div id="legend-container">
+                        <span class="legend-item"><span class="legend-color legend-comparing"></span>Comparing</span>
+                        <span class="legend-item"><span class="legend-color legend-swapping"></span>Swapping</span>
+                        <span class="legend-item"><span class="legend-color legend-sorted"></span>Sorted / Done</span>
+                        <span class="legend-item"><span class="legend-color legend-special"></span>Pivot / Target</span>
+                    </div>
                     <div id="search-input-container">
                         <label for="search-input">Search for:</label>
                         <input type="number" id="search-input" placeholder="Value">
@@ -61,8 +67,11 @@
                 <div id="visualization-container"></div>
             </div>
             <div id="complexity-info">
-                <div class="complexity-item">Time Complexity: <span id="time-complexity"></span></div>
-                <div class="complexity-item">Space Complexity: <span id="space-complexity"></span></div>
+                <div class="complexity-item"><i class="fas fa-clock"></i> Time: <span id="time-complexity"></span></div>
+                <div class="complexity-item"><i class="fas fa-memory"></i> Space: <span id="space-complexity"></span></div>
+                <div class="complexity-item"><i class="fas fa-balance-scale"></i> Comparisons: <span id="metric-comparisons">0</span></div>
+                <div class="complexity-item"><i class="fas fa-exchange-alt"></i> Swaps: <span id="metric-swaps">0</span></div>
+                <div class="complexity-item"><i class="fas fa-shoe-prints"></i> Steps: <span id="metric-steps">0</span></div>
             </div>
             <div id="explanation-container" style="display: none;">
                 <div class="code-header">Explanation</div>
