@@ -12,3 +12,6 @@ npm-debug.log*
 
 # Version archives
 v*/
+
+# Knowledge graph cache
+graphify-out/

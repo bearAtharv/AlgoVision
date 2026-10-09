@@ -30,13 +30,21 @@ body { font-family: 'Inter', sans-serif; background-color: #121212; color: #E0E0
 .code-header { padding: 10px 15px; background-color: #252526; border-bottom: 1px solid #333; color: #E0E0E0; font-weight: 500; }
 pre[class*="language-"] { flex-grow: 1; margin: 0; overflow: auto; background: #1E1E1E !important; }
 .visualization-wrapper { flex-grow: 1; display: flex; flex-direction: column; margin-top: 20px; min-height: 250px; }
-#vis-header { display: flex; justify-content: flex-end; align-items: center; padding: 0 10px; margin-bottom: 10px; height: 30px;}
+#vis-header { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; margin-bottom: 10px; height: 30px; }
+#legend-container { display: flex; align-items: center; gap: 14px; font-size: 0.85em; color: #AAA; }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.legend-color { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.legend-comparing { background-color: #00A99D; }
+.legend-swapping { background-color: #FFC107; }
+.legend-sorted { background-color: #2E7D32; }
+.legend-special { background-color: #C51162; }
 #search-input-container { display: none; align-items: center; }
 #search-input-container label { margin-right: 10px; }
 #search-input { background-color: #2a2a2a; border: 1px solid #333; color: #E0E0E0; padding: 6px 10px; border-radius: 5px; width: 80px; }
 #visualization-container { flex-grow: 1; border: 1px solid #333; border-radius: 8px; display: flex; justify-content: center; align-items: center; background-color: #1E1E1E; }
-#complexity-info { background-color: #1E1E1E; border-radius: 8px; border: 1px solid #333; padding: 15px; margin-top: 20px; display: flex; justify-content: space-around; }
-.complexity-item { font-size: 1.1em; }
+#complexity-info { background-color: #1E1E1E; border-radius: 8px; border: 1px solid #333; padding: 12px 15px; margin-top: 15px; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 10px; }
+.complexity-item { font-size: 0.95em; display: flex; align-items: center; gap: 6px; color: #AAA; }
+.complexity-item i { color: #888; font-size: 0.9em; }
 .complexity-item span { font-weight: bold; color: #00A99D; }
 #controls { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; flex-shrink: 0; }
 .playback-controls { display: flex; flex: 1; justify-content: flex-start; }

@@ -14,7 +14,7 @@ function analyzeAndExecute(code, values) {
     const steps = [];
 
     // A simple heuristic for complexity analysis
-    const lines = code.split('\n');
+    const lines = (code || '').split('\n');
     const loopRegex = /for|while/;
     const allocationRegex = /new|Array|Object/;
 
@@ -29,20 +29,33 @@ function analyzeAndExecute(code, values) {
 
     const explanation = generateExplanation(code);
 
-    const customAlgorithm = new Function(`return ${code}`)();
-    const sorter = customAlgorithm(values, []);
-    let result = sorter.next();
-    while (!result.done) {
-        steps.push(JSON.parse(JSON.stringify(result.value)));
-        result = sorter.next();
+    const inputValues = Array.isArray(values) && values.length > 0 ? [...values] : [10, 20, 15, 30, 25];
+    const states = new Array(inputValues.length).fill(-1);
+
+    const customAlgorithm = new Function(`return (${code})`)();
+    const sorter = customAlgorithm(inputValues, states);
+
+    if (sorter && typeof sorter.next === 'function') {
+        let result = sorter.next();
+        let stepCount = 0;
+        const maxSteps = 5000;
+        while (!result.done && stepCount < maxSteps) {
+            steps.push([...states]);
+            result = sorter.next();
+            stepCount++;
+        }
+    } else {
+        throw new Error('Custom code must be a generator function (e.g. function* myAlgorithm(values, states) { ... })');
     }
 
-    return { time: `O(n^${time})`, space: `O(${space > 0 ? 'n' : '1'})`, explanation, steps };
+    const timeComplexity = time > 0 ? (time === 1 ? 'O(n)' : `O(n^${time})`) : 'O(1)';
+    const spaceComplexity = space > 0 ? 'O(n)' : 'O(1)';
+
+    return { time: timeComplexity, space: spaceComplexity, explanation, steps };
 }
 
 function generateExplanation(code) {
-    // A simple heuristic for explanation generation
-    const lines = code.split('\n');
+    const lines = (code || '').split('\n');
     const explanation = [];
 
     lines.forEach(line => {
